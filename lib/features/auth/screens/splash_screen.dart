@@ -5,79 +5,247 @@ import 'package:workers/core/localization/localization_delegate.dart';
 import 'package:workers/features/home/screens/home_page.dart';
 import 'package:workers/features/auth/screens/register_page.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashController extends GetxController {
   @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
+  void onInit() {
+    super.onInit();
     _navigateToNextScreen();
   }
 
-  _navigateToNextScreen() async {
-    await Future.delayed(Duration(seconds: 3));
-
+  void _navigateToNextScreen() async {
     final AuthController authController = Get.find<AuthController>();
+    final minDelay = Future.delayed(const Duration(milliseconds: 2000));
+
+    while (authController.isLoading.value) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    await minDelay;
+
     if (authController.isUserLoggedIn.value) {
       Get.offAll(() => HomePage());
     } else {
       Get.offAll(() => RegisterPage());
     }
   }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // تهيئة الـ Controller مرة واحدة فقط
+    Get.put(SplashController());
+
     return Scaffold(
       body: Container(
         width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade800, Colors.blue.shade400],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF1A237E), // Deep Blue
+              Color(0xFF283593),
+              Color(0xFF3949AB),
+              Color(0xFF5E35B1), // Purple accent
+            ],
+            stops: [0.0, 0.3, 0.7, 1.0],
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            // App logo or icon
-            Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10)),
+            // Animated background circles
+            _buildBackgroundCircles(),
+
+            // Main content
+            SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
+
+                  // Logo
+                  _buildLogo(),
+
+                  const SizedBox(height: 40),
+
+                  // App title
+                  _buildTitle(context),
+
+                  const SizedBox(height: 16),
+
+                  // Description
+                  _buildDescription(context),
+
+                  const Spacer(flex: 2),
+
+                  // Loading indicator
+                  _buildLoadingIndicator(),
+
+                  const SizedBox(height: 50),
                 ],
               ),
-              child: Icon(Icons.work, size: 80, color: Colors.blue.shade800),
             ),
-            SizedBox(height: 30),
-            // App name
-            Text(
-              AppLocalizations.of(context).splashScreenTitle,
-              style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            // Slogan or description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Text(
-                AppLocalizations.of(context).splashScreenDescription,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
-            ),
-            SizedBox(height: 50),
-            // Loading indicator
-            CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBackgroundCircles() {
+    return Stack(
+      children: [
+        Positioned(
+          top: -100,
+          right: -100,
+          child: Container(
+            width: 300,
+            height: 300,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.05),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -150,
+          left: -100,
+          child: Container(
+            width: 400,
+            height: 400,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.03),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 150,
+          left: -50,
+          child: Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.04),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogo() {
+    return Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+            spreadRadius: 5,
+          ),
+          BoxShadow(
+            color: Color(0xFF5E35B1).withOpacity(0.3),
+            blurRadius: 40,
+            offset: const Offset(0, 10),
+            spreadRadius: -5,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF1A237E), Color(0xFF5E35B1)],
+            ),
+          ),
+          child: Icon(Icons.work_rounded, size: 60, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          AppLocalizations.of(context).splashScreenTitle,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
+            shadows: [
+              Shadow(
+                color: Colors.black.withOpacity(0.3),
+                offset: const Offset(0, 4),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: 80,
+          height: 4,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.white.withOpacity(0.0), Colors.white, Colors.white.withOpacity(0.0)],
+            ),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDescription(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Text(
+        AppLocalizations.of(context).splashScreenDescription,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.9),
+          fontSize: 16,
+          height: 1.5,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Column(
+      children: [
+        SizedBox(
+          width: 50,
+          height: 50,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            backgroundColor: Colors.white.withOpacity(0.2),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'جاري التحميل...',
+          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14, letterSpacing: 1),
+        ),
+      ],
     );
   }
 }
