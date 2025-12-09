@@ -23,47 +23,25 @@ class SplashController extends GetxController {
       Get.offAll(
         () => HomePage(),
         transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 400),
       );
     } else {
       Get.offAll(
         () => RegisterPage(),
         transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 400),
       );
     }
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
-
-    Get.put(SplashController());
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    Get.put(SplashController());
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -108,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
                   const Spacer(flex: 2),
 
-                  // Loading indicator - animated dots
+                  // Loading indicator - ثابت بدون Obx لتجنب إعادة البناء
                   _buildLoadingIndicator(),
 
                   const SizedBox(height: 50),
@@ -257,63 +235,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget _buildLoadingIndicator() {
     return Column(
       children: [
-        // دائرة دوارة مخصصة
-        RotationTransition(
-          turns: _animationController,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.2), width: 3),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        SizedBox(
+          width: 50,
+          height: 50,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            backgroundColor: Colors.white.withOpacity(0.2),
           ),
         ),
         const SizedBox(height: 20),
-        // نقاط متحركة
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (index) {
-                final delay = index * 0.2;
-                final scale = ((_animationController.value + delay) % 1.0 < 0.5)
-                    ? 1.0 + ((_animationController.value + delay) % 0.5) * 0.8
-                    : 1.4 - ((_animationController.value + delay) % 0.5) * 0.8;
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Transform.scale(
-                    scale: scale,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                    ),
-                  ),
-                );
-              }),
-            );
-          },
-        ),
-        const SizedBox(height: 16),
         Text(
           'جاري التحميل...',
           style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14, letterSpacing: 1),
