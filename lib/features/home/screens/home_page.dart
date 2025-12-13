@@ -814,7 +814,7 @@ class _StatColumn extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Color(0xFFD6C3A5),
+            color: isDark ? Colors.white : Color.fromARGB(255, 215, 210, 200),
           ),
         ),
         SizedBox(height: 2),
