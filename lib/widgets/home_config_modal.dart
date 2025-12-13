@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../features/home/controllers/home_config_controller.dart';
 import '../features/home/models/home_config_model.dart';
 
@@ -42,7 +41,7 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(AppLocalizations.of(context).homeConfig),
+      title: Text('homeConfig'.tr),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Form(
@@ -53,53 +52,50 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildTextField(
-                  label: AppLocalizations.of(context).headerTitleLabel,
+                  label: 'headerTitleLabel'.tr,
                   initialValue: tempConfig.headerTitle,
                   onChanged: (value) => tempConfig = tempConfig.copyWith(headerTitle: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).headerSubtitleLabel,
+                  label: 'headerSubtitleLabel'.tr,
                   initialValue: tempConfig.headerSubtitle,
                   onChanged: (value) => tempConfig = tempConfig.copyWith(headerSubtitle: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).searchHintLabel,
+                  label: 'searchHintLabel'.tr,
                   initialValue: tempConfig.searchHint,
                   onChanged: (value) => tempConfig = tempConfig.copyWith(searchHint: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).featuredWorkersTitleLabel,
+                  label: 'featuredWorkersTitleLabel'.tr,
                   initialValue: tempConfig.featuredWorkersTitle,
                   onChanged: (value) =>
                       tempConfig = tempConfig.copyWith(featuredWorkersTitle: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).categoriesTitleLabel,
+                  label: 'categoriesTitleLabel'.tr,
                   initialValue: tempConfig.categoriesTitle,
                   onChanged: (value) => tempConfig = tempConfig.copyWith(categoriesTitle: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).allWorkersTitleLabel,
+                  label: 'allWorkersTitleLabel'.tr,
                   initialValue: tempConfig.allWorkersTitle,
                   onChanged: (value) => tempConfig = tempConfig.copyWith(allWorkersTitle: value),
                 ),
                 SizedBox(height: 16),
                 _buildTextField(
-                  label: AppLocalizations.of(context).emptyResultsMessageLabel,
+                  label: 'emptyResultsMessageLabel'.tr,
                   initialValue: tempConfig.emptyResultsMessage,
                   onChanged: (value) =>
                       tempConfig = tempConfig.copyWith(emptyResultsMessage: value),
                 ),
                 SizedBox(height: 24),
-                Text(
-                  AppLocalizations.of(context).categoriesLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('categoriesLabel'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 ...List.generate(_categoryControllers.length, (index) {
                   return Padding(
@@ -110,13 +106,12 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
                           child: TextFormField(
                             controller: _categoryControllers[index],
                             decoration: InputDecoration(
-                              labelText:
-                                  '${AppLocalizations.of(context).categoryLabel} ${index + 1}',
+                              labelText: '${'categoryLabel'.tr} ${index + 1}',
                               border: OutlineInputBorder(),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return AppLocalizations.of(context).pleaseEnterCategoryName;
+                                return 'pleaseEnterCategoryName'.tr;
                               }
                               return null;
                             },
@@ -134,13 +129,10 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
                 ElevatedButton.icon(
                   onPressed: _addCategory,
                   icon: Icon(Icons.add),
-                  label: Text(AppLocalizations.of(context).addCategory),
+                  label: Text('addCategory'.tr),
                 ),
                 SizedBox(height: 16),
-                Text(
-                  AppLocalizations.of(context).themeColorsLabel,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('themeColorsLabel'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Container(
                   height: 50,
@@ -171,14 +163,8 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context).cancel),
-        ),
-        ElevatedButton(
-          onPressed: _saveConfig,
-          child: Text(AppLocalizations.of(context).saveChanges),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('cancel'.tr)),
+        ElevatedButton(onPressed: _saveConfig, child: Text('saveChanges'.tr)),
       ],
     );
   }
@@ -194,7 +180,7 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
       onChanged: onChanged,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return AppLocalizations.of(context).pleaseFillThisField;
+          return 'pleaseFillThisField'.tr;
         }
         return null;
       },
@@ -235,10 +221,7 @@ class _HomeConfigModalState extends State<HomeConfigModal> {
       // Save the configuration
       configController.saveConfig(tempConfig);
 
-      Get.snackbar(
-        AppLocalizations.of(context).success,
-        AppLocalizations.of(context).dataUpdatedSuccessfully,
-      );
+      Get.snackbar('success'.tr, 'dataUpdatedSuccessfully'.tr);
       Navigator.of(context).pop();
     }
   }

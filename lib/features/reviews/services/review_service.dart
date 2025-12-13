@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../models/review_model.dart';
 
 class ReviewService {
@@ -44,7 +43,7 @@ class ReviewService {
       print('ReviewService: Saved ${allReviews.length} reviews. Success: $result');
       return result;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} saving review: $e');
+      print('${'error'.tr} saving review: $e');
       return false;
     }
   }
@@ -66,7 +65,7 @@ class ReviewService {
       print('ReviewService: Found ${reviews.length} reviews in storage');
       return reviews;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving reviews: $e');
+      print('${'error'.tr} retrieving reviews: $e');
       return [];
     }
   }
@@ -80,7 +79,7 @@ class ReviewService {
       print('ReviewService: Found ${workerReviews.length} reviews for worker $workerId');
       return workerReviews;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving worker reviews: $e');
+      print('${'error'.tr} retrieving worker reviews: $e');
       return [];
     }
   }
@@ -109,8 +108,9 @@ class ReviewService {
       print('ReviewService: Deleted review $reviewId. Remaining reviews: ${allReviews.length}');
       return result;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} deleting review: $e');
+      print('${'error'.tr} deleting review: $e');
       return false;
     }
   }
 }
+

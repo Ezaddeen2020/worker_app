@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workers/core/theme/app_colors.dart';
 
 class ThemeController extends GetxController {
   static const String _themeKey = 'isDarkMode';
@@ -43,46 +44,47 @@ class ThemeController extends GetxController {
   // Light Theme
   static ThemeData get lightTheme => ThemeData(
     brightness: Brightness.light,
-    primarySwatch: Colors.blue,
     fontFamily: 'Cairo',
-    scaffoldBackgroundColor: Colors.grey[50],
-    cardColor: Colors.white,
-    dividerColor: Colors.grey[200],
-    appBarTheme: AppBarTheme(
+    scaffoldBackgroundColor: AppColors.background,
+    cardColor: AppColors.background,
+    dividerColor: AppColors.text.withOpacity(0.15),
+    appBarTheme: const AppBarTheme(
       elevation: 0,
-      backgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.blue[800]),
-      titleTextStyle: TextStyle(color: Colors.blue[800], fontSize: 20, fontWeight: FontWeight.bold),
+      backgroundColor: AppColors.background,
+      iconTheme: IconThemeData(color: AppColors.text),
+      titleTextStyle: TextStyle(color: AppColors.text, fontSize: 20, fontWeight: FontWeight.bold),
     ),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.white,
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.background,
+      selectedItemColor: AppColors.buttonBackground,
+      unselectedItemColor: AppColors.text,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        backgroundColor: AppColors.buttonBackground,
+        foregroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
       ),
     ),
-    textTheme: TextTheme(
-      bodyMedium: TextStyle(fontSize: 16, height: 1.5, color: Colors.black87),
-      bodyLarge: TextStyle(fontSize: 18, height: 1.5, color: Colors.black87),
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(fontSize: 16, height: 1.5, color: AppColors.text),
+      bodyLarge: TextStyle(fontSize: 18, height: 1.5, color: AppColors.text),
+      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.text),
     ),
-    iconTheme: IconThemeData(color: Colors.black87),
-    listTileTheme: ListTileThemeData(iconColor: Colors.black87, textColor: Colors.black87),
-    dialogTheme: DialogThemeData(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    iconTheme: const IconThemeData(color: AppColors.text),
+    listTileTheme: const ListTileThemeData(iconColor: AppColors.text, textColor: AppColors.text),
+    dialogTheme: const DialogThemeData(
+      backgroundColor: AppColors.background,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
     ),
-    snackBarTheme: SnackBarThemeData(
-      backgroundColor: Colors.black87,
-      contentTextStyle: TextStyle(color: Colors.white),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: AppColors.buttonBackground,
+      contentTextStyle: TextStyle(color: AppColors.white),
     ),
-    colorScheme: ColorScheme.light(
-      primary: Colors.blue,
-      secondary: Colors.blue[700]!,
-      surface: Colors.white,
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.buttonBackground,
+      secondary: AppColors.text,
+      surface: AppColors.background,
       error: Colors.red,
     ),
   );
@@ -90,55 +92,55 @@ class ThemeController extends GetxController {
   // Dark Theme
   static ThemeData get darkTheme => ThemeData(
     brightness: Brightness.dark,
-    primarySwatch: Colors.blue,
     fontFamily: 'Cairo',
-    scaffoldBackgroundColor: Color(0xFF121212),
-    cardColor: Color(0xFF1E1E1E),
-    dividerColor: Colors.grey[800],
-    appBarTheme: AppBarTheme(
+    scaffoldBackgroundColor: AppColors.background,
+    cardColor: AppColors.background,
+    dividerColor: AppColors.text.withOpacity(0.15),
+    appBarTheme: const AppBarTheme(
       elevation: 0,
-      backgroundColor: Color(0xFF121212),
-      iconTheme: IconThemeData(color: Colors.white),
-      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      backgroundColor: AppColors.background,
+      iconTheme: IconThemeData(color: AppColors.text),
+      titleTextStyle: TextStyle(color: AppColors.text, fontSize: 20, fontWeight: FontWeight.bold),
     ),
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF121212),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.grey[600],
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.background,
+      selectedItemColor: AppColors.buttonBackground,
+      unselectedItemColor: AppColors.text,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: AppColors.buttonBackground,
+        foregroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
       ),
     ),
-    textTheme: TextTheme(
-      bodyMedium: TextStyle(fontSize: 16, height: 1.5, color: Colors.white),
-      bodyLarge: TextStyle(fontSize: 18, height: 1.5, color: Colors.white),
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(fontSize: 16, height: 1.5, color: AppColors.text),
+      bodyLarge: TextStyle(fontSize: 18, height: 1.5, color: AppColors.text),
+      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.text),
     ),
-    iconTheme: IconThemeData(color: Colors.white),
-    listTileTheme: ListTileThemeData(iconColor: Colors.white, textColor: Colors.white),
-    dialogTheme: DialogThemeData(
-      backgroundColor: Color(0xFF1E1E1E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    iconTheme: const IconThemeData(color: AppColors.text),
+    listTileTheme: const ListTileThemeData(iconColor: AppColors.text, textColor: AppColors.text),
+    dialogTheme: const DialogThemeData(
+      backgroundColor: AppColors.background,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
     ),
-    snackBarTheme: SnackBarThemeData(
-      backgroundColor: Colors.grey[800],
-      contentTextStyle: TextStyle(color: Colors.white),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: AppColors.buttonBackground,
+      contentTextStyle: TextStyle(color: AppColors.white),
     ),
-    colorScheme: ColorScheme.dark(
-      primary: Colors.blue[400]!,
-      secondary: Colors.blue[300]!,
-      surface: Color(0xFF1E1E1E),
-      error: Colors.red[400]!,
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.buttonBackground,
+      secondary: AppColors.text,
+      surface: AppColors.background,
+      error: Colors.red,
     ),
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Color(0xFF2C2C2C),
+      fillColor: AppColors.background,
       filled: true,
-      hintStyle: TextStyle(color: Colors.grey[500]),
+      hintStyle: TextStyle(color: AppColors.text),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
         borderSide: BorderSide.none,
       ),
     ),

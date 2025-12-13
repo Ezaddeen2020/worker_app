@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:workers/features/auth/controller/auth_controller.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import 'package:workers/features/home/screens/home_page.dart';
 import 'package:workers/features/auth/screens/register_page.dart';
 
@@ -59,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 30),
             // App name
             Text(
-              AppLocalizations.of(context).splashScreenTitle,
+              'splashScreenTitle'.tr,
               style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
@@ -67,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Text(
-                AppLocalizations.of(context).splashScreenDescription,
+                'splashScreenDescription'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
@@ -81,3 +80,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+

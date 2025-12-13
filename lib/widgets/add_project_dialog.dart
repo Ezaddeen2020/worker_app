@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../features/posts/models/project_model.dart';
 import 'package:workers/features/auth/controller/auth_controller.dart';
 import '../features/posts/services/post_service.dart';
@@ -49,10 +48,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        AppLocalizations.of(context).addNewPost,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      title: Text('addNewPost'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -150,7 +146,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                       }
                     },
                     icon: const Icon(Icons.image),
-                    label: Text(AppLocalizations.of(context).selectImage),
+                    label: Text('selectImage'.tr),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 5, 95, 66),
                       foregroundColor: Colors.white,
@@ -169,7 +165,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                       }
                     },
                     icon: const Icon(Icons.camera_alt),
-                    label: Text(AppLocalizations.of(context).camera),
+                    label: Text('camera'.tr),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
                       foregroundColor: Colors.white,
@@ -186,7 +182,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
               controller: _titleController,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context).projectTitle,
+                labelText: 'projectTitle'.tr,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 prefixIcon: const Icon(Icons.title),
               ),
@@ -197,7 +193,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
               maxLines: 3,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context).projectDescription,
+                labelText: 'projectDescription'.tr,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 prefixIcon: const Icon(Icons.description),
               ),
@@ -208,7 +204,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.right,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context).priceOptional,
+                labelText: 'priceOptional'.tr,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 prefixIcon: const Icon(Icons.attach_money),
               ),
@@ -221,23 +217,22 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
           onPressed: () {
             Get.back();
           },
-          child: Text(AppLocalizations.of(context).cancel),
+          child: Text('cancel'.tr),
         ),
         ElevatedButton(
           onPressed: _isPublishing
               ? null
               : () async {
-                  final localizations = AppLocalizations.of(context);
                   final title = _titleController.text.trim();
                   final description = _descController.text.trim();
 
                   if (title.isEmpty) {
-                    Get.snackbar(localizations.error, localizations.enterProjectTitle);
+                    Get.snackbar('error'.tr, 'enterProjectTitle'.tr);
                     return;
                   }
 
                   if (description.isEmpty) {
-                    Get.snackbar(localizations.error, localizations.enterProjectDescription);
+                    Get.snackbar('error'.tr, 'enterProjectDescription'.tr);
                     return;
                   }
 
@@ -245,7 +240,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                   final userId = widget.user.id?.toString() ?? '';
                   if (userId.isEmpty) {
                     print('AddProjectDialog: user.id is empty or null');
-                    Get.snackbar(localizations.error, 'خطأ في بيانات المستخدم');
+                    Get.snackbar('error'.tr, 'خطأ في بيانات المستخدم');
                     return;
                   }
 
@@ -272,9 +267,9 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
 
                   if (ok) {
                     Get.back();
-                    Get.snackbar(localizations.success, localizations.postAddedSuccessfully);
+                    Get.snackbar('success'.tr, 'postAddedSuccessfully'.tr);
                   } else {
-                    Get.snackbar(localizations.error, localizations.failedToAddPost);
+                    Get.snackbar('error'.tr, 'failedToAddPost'.tr);
                   }
                 },
           style: ElevatedButton.styleFrom(
@@ -287,7 +282,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                 )
-              : Text(AppLocalizations.of(context).publish),
+              : Text('publish'.tr),
         ),
       ],
     );

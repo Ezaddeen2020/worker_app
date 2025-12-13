@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../models/worker_profile_model.dart';
 import '../../posts/models/project_model.dart';
 
@@ -23,7 +22,7 @@ class WorkerProfileService {
       final json = jsonEncode(profile.toMap());
       return await prefs.setString(_keyFor(profile.userId), json);
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} saving WorkerProfile: $e');
+      print('${'error'.tr} saving WorkerProfile: $e');
       return false;
     }
   }
@@ -37,7 +36,7 @@ class WorkerProfileService {
       final map = jsonDecode(json);
       return WorkerProfile.fromMap(Map<String, dynamic>.from(map));
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving WorkerProfile: $e');
+      print('${'error'.tr} retrieving WorkerProfile: $e');
       return null;
     }
   }
@@ -97,7 +96,7 @@ class WorkerProfileService {
       print('WorkerProfileService: Successfully updated profile with new like count');
       return updatedProfile;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} toggling like on project: $e');
+      print('${'error'.tr} toggling like on project: $e');
       return null;
     }
   }
@@ -127,8 +126,9 @@ class WorkerProfileService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.remove(_keyFor(userId));
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} deleting WorkerProfile: $e');
+      print('${'error'.tr} deleting WorkerProfile: $e');
       return false;
     }
   }
 }
+

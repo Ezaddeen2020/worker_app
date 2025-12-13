@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
+import 'package:get/get.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -13,7 +13,7 @@ class FavoritesPage extends StatelessWidget {
       appBar: null,
       body: Center(
         child: Text(
-          AppLocalizations.of(context).favoritesPageTitle,
+          'favoritesPageTitle'.tr,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,

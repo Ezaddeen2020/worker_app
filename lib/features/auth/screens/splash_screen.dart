@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:workers/features/auth/controller/auth_controller.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import 'package:workers/features/home/screens/home_page.dart';
 import 'package:workers/features/auth/screens/register_page.dart';
 
@@ -66,31 +65,23 @@ class SplashScreen extends StatelessWidget {
 
             // Main content
             SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 2),
-
-                  // Logo
-                  _buildLogo(),
-
-                  const SizedBox(height: 40),
-
-                  // App title
-                  _buildTitle(context),
-
-                  const SizedBox(height: 16),
-
-                  // Description
-                  _buildDescription(context),
-
-                  const Spacer(flex: 2),
-
-                  // Loading indicator - ثابت بدون Obx لتجنب إعادة البناء
-                  _buildLoadingIndicator(),
-
-                  const SizedBox(height: 50),
-                ],
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo
+                    _buildLogo(),
+                    const SizedBox(height: 40),
+                    // App title
+                    _buildTitle(context),
+                    const SizedBox(height: 16),
+                    // Description
+                    _buildDescription(context),
+                    const SizedBox(height: 32),
+                    // Loading indicator
+                    _buildLoadingIndicator(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -186,7 +177,7 @@ class SplashScreen extends StatelessWidget {
     return Column(
       children: [
         Text(
-          AppLocalizations.of(context).splashScreenTitle,
+          'splashScreenTitle'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 36,
@@ -220,7 +211,7 @@ class SplashScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Text(
-        AppLocalizations.of(context).splashScreenDescription,
+        'splashScreenDescription'.tr,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Colors.white.withOpacity(0.9),

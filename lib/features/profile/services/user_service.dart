@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../models/user_model.dart';
 
 class UserService {
@@ -22,7 +21,7 @@ class UserService {
       final userJson = jsonEncode(user.toMap());
       return await prefs.setString(_userKey, userJson);
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} saving user: $e');
+      print('${'error'.tr} saving user: $e');
       return false;
     }
   }
@@ -38,7 +37,7 @@ class UserService {
       final userMap = jsonDecode(userJson);
       return User.fromMap(userMap);
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving user: $e');
+      print('${'error'.tr} retrieving user: $e');
       return null;
     }
   }
@@ -59,7 +58,7 @@ class UserService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.remove(_userKey);
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} deleting user: $e');
+      print('${'error'.tr} deleting user: $e');
       return false;
     }
   }
@@ -87,7 +86,7 @@ class UserService {
       print('UserService: User update completed. Success: $saved');
       return saved;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} updating user: $e');
+      print('${'error'.tr} updating user: $e');
       return false;
     }
   }
@@ -156,7 +155,7 @@ class UserService {
       print('UserService: Saved ${allUsers.length} users to storage. Success: $result');
       return result;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} saving user to all users list: $e');
+      print('${'error'.tr} saving user to all users list: $e');
       return false;
     }
   }
@@ -185,7 +184,7 @@ class UserService {
 
       return users;
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving all users: $e');
+      print('${'error'.tr} retrieving all users: $e');
       return [];
     }
   }
@@ -196,7 +195,7 @@ class UserService {
       final allUsers = await getAllUsers();
       return allUsers.firstWhereOrNull((u) => u.id == userId);
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} retrieving user by ID: $e');
+      print('${'error'.tr} retrieving user by ID: $e');
       return null;
     }
   }
@@ -215,7 +214,8 @@ class UserService {
         }
       }
     } catch (e) {
-      print('${AppLocalizations.of(Get.context!).error} initializing all users list: $e');
+      print('${'error'.tr} initializing all users list: $e');
     }
   }
 }
+

@@ -1,62 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' as get_package;
+import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
-import '../../workers/models/worker_model.dart';
 import '../../workers/controllers/worker_controller.dart';
+import '../controllers/worker_profile_controller.dart';
 import '../../reviews/models/review_model.dart';
-import '../../reviews/services/review_service.dart';
 
-class WorkerProfilePage extends StatefulWidget {
-  final Worker worker;
-
-  const WorkerProfilePage({required this.worker, super.key});
-
-  @override
-  State<WorkerProfilePage> createState() => _WorkerProfilePageState();
-}
-
-class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final WorkerController controller = get_package.Get.find();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class WorkerProfilePage extends StatelessWidget {
+  const WorkerProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(WorkerProfileController());
+    final workerController = Get.find<WorkerController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 280,
             pinned: true,
             automaticallyImplyLeading: false,
-            backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
-            flexibleSpace: FlexibleSpaceBar(background: _buildHeader()),
+            backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
+            flexibleSpace: FlexibleSpaceBar(background: _buildHeader(controller)),
           ),
-          SliverToBoxAdapter(child: _buildStatsSection(isDark)),
-          SliverToBoxAdapter(child: _buildActionButtons(isDark)),
-          SliverToBoxAdapter(child: _buildBioSection(isDark)),
-          SliverToBoxAdapter(child: _buildTabBar(isDark)),
+          SliverToBoxAdapter(child: _buildStatsSection(controller, isDark)),
+          SliverToBoxAdapter(child: _buildActionButtons(controller, workerController, isDark)),
+          SliverToBoxAdapter(child: _buildBioSection(controller, isDark)),
+          SliverToBoxAdapter(child: _buildTabBar(controller, isDark)),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 400,
               child: TabBarView(
-                controller: _tabController,
-                children: [_buildPortfolioSection(isDark), _buildReviewsSection(isDark)],
+                controller: controller.tabController,
+                children: [
+                  _buildPortfolioSection(controller, isDark),
+                  _buildReviewsSection(controller, isDark),
+                ],
               ),
             ),
           ),
@@ -65,9 +46,9 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(WorkerProfileController controller) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Color.fromARGB(255, 5, 95, 66), Color.fromARGB(255, 10, 150, 100)],
           begin: Alignment.topLeft,
@@ -76,13 +57,16 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
       ),
       child: Stack(
         children: [
-          Opacity(opacity: 0.1, child: Icon(Icons.construction, size: 200, color: Colors.white)),
+          const Opacity(
+            opacity: 0.1,
+            child: Icon(Icons.construction, size: 200, color: Colors.white),
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [Color(0xFFFB923C), Color(0xFFEA580C)],
@@ -92,18 +76,18 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                 ),
                 child: CircleAvatar(
                   radius: 55,
-                  backgroundImage: widget.worker.imageUrl.isNotEmpty
-                      ? CachedNetworkImageProvider(widget.worker.imageUrl)
+                  backgroundImage: controller.worker.imageUrl.isNotEmpty
+                      ? CachedNetworkImageProvider(controller.worker.imageUrl)
                       : null,
                   backgroundColor: Colors.white,
-                  child: widget.worker.imageUrl.isEmpty
-                      ? Icon(Icons.person, size: 50, color: Color.fromARGB(255, 5, 95, 66))
+                  child: controller.worker.imageUrl.isEmpty
+                      ? const Icon(Icons.person, size: 50, color: Color.fromARGB(255, 5, 95, 66))
                       : null,
                 ),
               ),
               const SizedBox(height: 16),
               Text(
-                widget.worker.name,
+                controller.worker.name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -119,7 +103,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                   border: Border.all(color: Colors.white, width: 1.5),
                 ),
                 child: Text(
-                  widget.worker.category,
+                  controller.worker.category,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 13,
@@ -134,7 +118,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                   const Icon(Icons.location_on, size: 16, color: Colors.white70),
                   const SizedBox(width: 4),
                   Text(
-                    widget.worker.city,
+                    controller.worker.city,
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
@@ -152,7 +136,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => get_package.Get.back(),
+                  onPressed: () => Get.back(),
                 ),
               ),
             ),
@@ -162,10 +146,10 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     );
   }
 
-  Widget _buildStatsSection(bool isDark) {
+  Widget _buildStatsSection(WorkerProfileController controller, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -179,32 +163,32 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildStatItem(
-            '${widget.worker.rating}',
-            AppLocalizations.of(context).rating,
+            '${controller.worker.rating}',
+            'rating'.tr,
             Icons.star,
             Colors.amber,
             isDark,
           ),
           _buildDivider(isDark),
           _buildStatItem(
-            '${widget.worker.reviewsCount}',
-            AppLocalizations.of(context).reviews,
+            '${controller.worker.reviewsCount}',
+            'reviews'.tr,
             Icons.rate_review,
             Colors.blue,
             isDark,
           ),
           _buildDivider(isDark),
           _buildStatItem(
-            '${widget.worker.followersCount}',
-            AppLocalizations.of(context).followers,
+            '${controller.worker.followersCount}',
+            'followers'.tr,
             Icons.people,
             Colors.pink,
             isDark,
           ),
           _buildDivider(isDark),
           _buildStatItem(
-            '${widget.worker.experience}',
-            AppLocalizations.of(context).yearsOfExperience,
+            '${controller.worker.experience}',
+            'yearsOfExperience'.tr,
             Icons.work_history,
             Colors.green,
             isDark,
@@ -241,31 +225,31 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
   Widget _buildDivider(bool isDark) =>
       Container(height: 40, width: 1, color: isDark ? Colors.grey[700] : Colors.grey[300]);
 
-  Widget _buildActionButtons(bool isDark) {
+  Widget _buildActionButtons(
+    WorkerProfileController controller,
+    WorkerController workerController,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-      child: get_package.Obx(() {
-        final currentWorker = controller.workers.firstWhere(
-          (w) => w.id == widget.worker.id,
-          orElse: () => widget.worker,
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      child: Obx(() {
+        final currentWorker = workerController.workers.firstWhere(
+          (w) => w.id == controller.worker.id,
+          orElse: () => controller.worker,
         );
 
         return Row(
           children: [
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => controller.toggleFollow(currentWorker),
+                onPressed: () => workerController.toggleFollow(currentWorker),
                 icon: Icon(currentWorker.isFollowing ? Icons.favorite : Icons.favorite_border),
-                label: Text(
-                  currentWorker.isFollowing
-                      ? AppLocalizations.of(context).following
-                      : AppLocalizations.of(context).follow,
-                ),
+                label: Text(currentWorker.isFollowing ? 'following'.tr : 'follow'.tr),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: currentWorker.isFollowing
                       ? Colors.red.withValues(alpha: 0.2)
-                      : Color.fromARGB(255, 5, 95, 66),
+                      : const Color.fromARGB(255, 5, 95, 66),
                   foregroundColor: currentWorker.isFollowing ? Colors.red : Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -280,9 +264,9 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => controller.openWhatsApp(widget.worker.whatsapp),
+                onPressed: () => workerController.openWhatsApp(controller.worker.whatsapp),
                 icon: const Icon(Icons.message),
-                label: Text(AppLocalizations.of(context).message),
+                label: Text('message'.tr),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[600],
                   foregroundColor: Colors.white,
@@ -294,11 +278,11 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: () => controller.makePhoneCall(widget.worker.phone),
+                onPressed: () => workerController.makePhoneCall(controller.worker.phone),
                 icon: const Icon(Icons.phone),
-                label: Text(AppLocalizations.of(context).phone),
+                label: Text('phone'.tr),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 5, 95, 66),
+                  backgroundColor: const Color.fromARGB(255, 5, 95, 66),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -311,15 +295,15 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     );
   }
 
-  Widget _buildBioSection(bool isDark) {
+  Widget _buildBioSection(WorkerProfileController controller, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context).aboutWorker,
+            'aboutWorker'.tr,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -330,12 +314,12 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? Color(0xFF262626) : Colors.grey[100],
+              color: isDark ? const Color(0xFF262626) : Colors.grey[100],
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
             ),
             child: Text(
-              widget.worker.bio,
+              controller.worker.bio,
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -350,24 +334,26 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 5, 95, 66).withValues(alpha: 0.05),
-                  Color.fromARGB(255, 10, 150, 100).withValues(alpha: 0.05),
+                  const Color.fromARGB(255, 5, 95, 66).withValues(alpha: 0.05),
+                  const Color.fromARGB(255, 10, 150, 100).withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color.fromARGB(255, 5, 95, 66).withValues(alpha: 0.3)),
+              border: Border.all(
+                color: const Color.fromARGB(255, 5, 95, 66).withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Color.fromARGB(255, 5, 95, 66), size: 20),
+                const Icon(Icons.info_outline, color: Color.fromARGB(255, 5, 95, 66), size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context).additionalInfo,
-                        style: TextStyle(
+                        'additionalInfo'.tr,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 5, 95, 66),
                           fontSize: 13,
@@ -375,7 +361,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${AppLocalizations.of(context).experience}: ${widget.worker.experience} ${AppLocalizations.of(context).yearsOfExperience} • ${AppLocalizations.of(context).rating}: ${widget.worker.rating}/5.0',
+                        '${'experience'.tr}: ${controller.worker.experience} ${'yearsOfExperience'.tr} • ${'rating'.tr}: ${controller.worker.rating}/5.0',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -393,37 +379,34 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     );
   }
 
-  Widget _buildTabBar(bool isDark) {
+  Widget _buildTabBar(WorkerProfileController controller, bool isDark) {
     return Container(
-      color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       child: TabBar(
-        controller: _tabController,
-        indicatorColor: Color.fromARGB(255, 5, 95, 66),
+        controller: controller.tabController,
+        indicatorColor: const Color.fromARGB(255, 5, 95, 66),
         indicatorWeight: 3,
-        labelColor: Color.fromARGB(255, 5, 95, 66),
+        labelColor: const Color.fromARGB(255, 5, 95, 66),
         unselectedLabelColor: Colors.grey,
         tabs: [
-          Tab(icon: Icon(Icons.image_not_supported), text: AppLocalizations.of(context).portfolio),
-          Tab(icon: Icon(Icons.star), text: AppLocalizations.of(context).reviews),
+          Tab(icon: const Icon(Icons.image_not_supported), text: 'portfolio'.tr),
+          Tab(icon: const Icon(Icons.star), text: 'reviews'.tr),
         ],
       ),
     );
   }
 
-  Widget _buildPortfolioSection(bool isDark) {
-    if (widget.worker.portfolio.isEmpty) {
+  Widget _buildPortfolioSection(WorkerProfileController controller, bool isDark) {
+    if (controller.worker.portfolio.isEmpty) {
       return Container(
-        color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.image_not_supported, size: 60, color: Colors.grey[400]),
               const SizedBox(height: 12),
-              Text(
-                AppLocalizations.of(context).noWorksFound,
-                style: TextStyle(color: Colors.grey[600], fontSize: 16),
-              ),
+              Text('noWorksFound'.tr, style: TextStyle(color: Colors.grey[600], fontSize: 16)),
             ],
           ),
         ),
@@ -431,7 +414,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     }
 
     return Container(
-      color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       padding: const EdgeInsets.all(8),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -439,7 +422,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
-        itemCount: widget.worker.portfolio.length,
+        itemCount: controller.worker.portfolio.length,
         itemBuilder: (context, index) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -449,11 +432,11 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8)],
               ),
               child: CachedNetworkImage(
-                imageUrl: widget.worker.portfolio[index],
+                imageUrl: controller.worker.portfolio[index],
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   color: isDark ? Colors.grey[800] : Colors.grey[300],
-                  child: const CircularProgressIndicator(),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: isDark ? Colors.grey[800] : Colors.grey[300],
@@ -467,77 +450,68 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
     );
   }
 
-  Widget _buildReviewsSection(bool isDark) {
-    return FutureBuilder<List<Review>>(
-      future: ReviewService.getReviewsForWorker(widget.worker.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Container(
-            color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-            child: Center(
-              child: Text(
-                '${AppLocalizations.of(context).error}: ${snapshot.error}',
-                style: TextStyle(color: isDark ? Colors.white : Colors.black),
-              ),
-            ),
-          );
-        }
-
-        final workerReviews = snapshot.data ?? [];
-
-        if (workerReviews.isEmpty) {
-          return Container(
-            color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.rate_review, size: 60, color: Colors.grey[400]),
-                  const SizedBox(height: 12),
-                  Text(
-                    AppLocalizations.of(context).noReviewsFound,
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context).beFirstToReview,
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
+  Widget _buildReviewsSection(WorkerProfileController controller, bool isDark) {
+    return Obx(() {
+      if (controller.isLoadingReviews.value) {
         return Container(
-          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: workerReviews.length,
-            itemBuilder: (context, index) => _buildReviewCard(workerReviews[index], isDark),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (controller.hasError.value) {
+        return Container(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          child: Center(
+            child: Text(
+              '${'error'.tr}: ${controller.errorMessage.value}',
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            ),
           ),
         );
-      },
-    );
+      }
+
+      if (controller.reviews.isEmpty) {
+        return Container(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.rate_review, size: 60, color: Colors.grey[400]),
+                const SizedBox(height: 12),
+                Text('noReviewsFound'.tr, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                const SizedBox(height: 8),
+                Text(
+                  'beFirstToReview'.tr,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return Container(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: controller.reviews.length,
+          itemBuilder: (context, index) =>
+              _buildReviewCard(controller, controller.reviews[index], isDark),
+        ),
+      );
+    });
   }
 
-  Widget _buildReviewCard(Review review, bool isDark) {
-    // Format the date for display
-    final formattedDate =
-        '${review.createdAt.year}-${review.createdAt.month.toString().padLeft(2, '0')}-${review.createdAt.day.toString().padLeft(2, '0')}';
+  Widget _buildReviewCard(WorkerProfileController controller, Review review, bool isDark) {
+    final formattedDate = controller.formatDate(review.createdAt);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Color(0xFF262626) : Colors.grey[50],
+        color: isDark ? const Color(0xFF262626) : Colors.grey[50],
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[200]!),
       ),
@@ -550,7 +524,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(color: Colors.blue[100], shape: BoxShape.circle),
                 child: Text(
-                  'U', // Initial of user
+                  'U',
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[700]),
                 ),
               ),
@@ -560,9 +534,7 @@ class _WorkerProfilePageState extends State<WorkerProfilePage> with SingleTicker
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(
-                        context,
-                      ).client, // In a real app, we would fetch the user's name
+                      'client'.tr,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

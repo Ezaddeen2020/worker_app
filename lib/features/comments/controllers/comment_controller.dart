@@ -1,21 +1,31 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/comment_model.dart';
 import '../services/comment_local_service.dart';
 import 'package:workers/features/auth/controller/auth_controller.dart';
+import 'package:workers/features/posts/models/project_model.dart';
+import 'package:workers/features/posts/services/post_service.dart';
 
 class CommentController extends GetxController {
+  // ==================== Text Controllers ====================
+  final TextEditingController textController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
   // ==================== Observable Variables ====================
   final RxList<Comment> comments = <Comment>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isSubmitting = false.obs;
   final RxString errorMessage = ''.obs;
   final RxInt commentsCount = 0.obs;
+  final RxString commentText = ''.obs;
 
   // للرد على تعليق
   final Rx<Comment?> replyingTo = Rx<Comment?>(null);
 
   // المشروع الحالي
   String? _currentProjectId;
+  Project? currentProject;
+  dynamic currentUser;
 
   // ==================== Getters ====================
 
@@ -24,6 +34,37 @@ class CommentController extends GetxController {
   bool get hasComments => comments.isNotEmpty;
 
   bool get isReplying => replyingTo.value != null;
+
+  bool get canSubmit => commentText.value.trim().isNotEmpty && !isSubmitting.value;
+
+  // ==================== Lifecycle ====================
+
+  @override
+  void onInit() {
+    super.onInit();
+    textController.addListener(_onTextChanged);
+  }
+
+  @override
+  void onClose() {
+    textController.removeListener(_onTextChanged);
+    textController.dispose();
+    focusNode.dispose();
+    clear();
+    super.onClose();
+  }
+
+  void _onTextChanged() {
+    commentText.value = textController.text;
+  }
+
+  // ==================== Initialize ====================
+
+  void initialize(Project project, dynamic user) {
+    currentProject = project;
+    currentUser = user;
+    loadComments(project.id);
+  }
 
   // ==================== Main Methods ====================
 
@@ -242,11 +283,61 @@ class CommentController extends GetxController {
   /// بدء الرد على تعليق
   void startReply(Comment comment) {
     replyingTo.value = comment;
+    focusNode.requestFocus();
   }
 
   /// إلغاء الرد
   void cancelReply() {
     replyingTo.value = null;
+  }
+
+  // ==================== Submit Methods ====================
+
+  /// إرسال التعليق
+  Future<void> submitComment() async {
+    final text = textController.text.trim();
+    if (text.isEmpty) return;
+
+    final success = await addComment(text);
+    if (success) {
+      textController.clear();
+      focusNode.unfocus();
+      if (currentProject != null && Get.isRegistered<PostService>()) {
+        Get.find<PostService>().refreshCommentCount(currentProject!.id);
+      }
+    }
+  }
+
+  /// تبديل الإعجاب مع البحث عن parentId
+  void toggleLikeWithSearch(Comment comment, {bool isReply = false}) {
+    String? parentId;
+    if (isReply) {
+      for (var c in comments) {
+        if (c.replies.any((r) => r.id == comment.id)) {
+          parentId = c.id;
+          break;
+        }
+      }
+    }
+    toggleLike(comment.id, isReply: isReply, parentId: parentId);
+  }
+
+  /// حذف مع البحث عن parentId
+  Future<bool> deleteCommentWithSearch(Comment comment, {bool isReply = false}) async {
+    String? parentId;
+    if (isReply) {
+      for (var c in comments) {
+        if (c.replies.any((r) => r.id == comment.id)) {
+          parentId = c.id;
+          break;
+        }
+      }
+    }
+    final deleted = await deleteComment(comment.id, isReply: isReply, parentId: parentId);
+    if (deleted && currentProject != null && Get.isRegistered<PostService>()) {
+      Get.find<PostService>().refreshCommentCount(currentProject!.id);
+    }
+    return deleted;
   }
 
   // ==================== Utility Methods ====================
@@ -264,7 +355,10 @@ class CommentController extends GetxController {
     commentsCount.value = 0;
     replyingTo.value = null;
     errorMessage.value = '';
+    commentText.value = '';
     _currentProjectId = null;
+    currentProject = null;
+    currentUser = null;
   }
 
   /// جلب عدد التعليقات لمشروع (بدون تحميل كامل)
@@ -272,9 +366,31 @@ class CommentController extends GetxController {
     return await CommentLocalService.getCommentsCount(projectId);
   }
 
-  @override
-  void onClose() {
-    clear();
-    super.onClose();
+  /// تنسيق الوقت
+  String formatTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 7) {
+      return '${difference.inDays ~/ 7}أ';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}ي';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}س';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}د';
+    } else {
+      return 'الآن';
+    }
+  }
+
+  /// إغلاق الصفحة
+  void goBack() {
+    Get.back();
+  }
+
+  /// مشاركة
+  void sharePost() {
+    Get.snackbar('مشاركة', 'مشاركة المنشور', snackPosition: SnackPosition.BOTTOM);
   }
 }

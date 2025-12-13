@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import 'dart:io';
 import 'package:workers/features/profile/models/user_model.dart';
 import 'package:workers/features/workers/models/worker_profile_model.dart';
@@ -63,10 +62,7 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       isUserLoggedIn.value = false;
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        AppLocalizations.of(Get.context!).failedToChangeLikeStatus,
-      );
+      Get.snackbar('error'.tr, 'failedToChangeLikeStatus'.tr);
     } finally {
       isLoading.value = false;
     }
@@ -82,14 +78,14 @@ class AuthController extends GetxController {
     try {
       // التحقق من البيانات
       if (!UserService.validateUserData(name: name, phone: phone)) {
-        errorMessage.value = AppLocalizations.of(Get.context!).invalidProjectData;
-        Get.snackbar(AppLocalizations.of(Get.context!).error, errorMessage.value);
+        errorMessage.value = 'invalidProjectData'.tr;
+        Get.snackbar('error'.tr, errorMessage.value);
         return false;
       }
 
       if (imagePath.isEmpty) {
-        errorMessage.value = AppLocalizations.of(Get.context!).selectProfileImage;
-        Get.snackbar(AppLocalizations.of(Get.context!).error, errorMessage.value);
+        errorMessage.value = 'selectProfileImage'.tr;
+        Get.snackbar('error'.tr, errorMessage.value);
         return false;
       }
 
@@ -115,8 +111,8 @@ class AuthController extends GetxController {
 
       // التحقق من صحة النموذج
       if (!user.isValid()) {
-        errorMessage.value = AppLocalizations.of(Get.context!).invalidProjectData;
-        Get.snackbar(AppLocalizations.of(Get.context!).error, errorMessage.value);
+        errorMessage.value = 'invalidProjectData'.tr;
+        Get.snackbar('error'.tr, errorMessage.value);
         return false;
       }
 
@@ -129,10 +125,7 @@ class AuthController extends GetxController {
           final profileSaved = await WorkerProfileService.saveProfile(profile);
           if (!profileSaved) {
             // لا نريد إلغاء تسجيل المستخدم لكن نعلِم المستخدم
-            Get.snackbar(
-              AppLocalizations.of(Get.context!).warning,
-              AppLocalizations.of(Get.context!).accountCreatedButWorkerProfileNotSaved,
-            );
+            Get.snackbar('warning'.tr, 'accountCreatedButWorkerProfileNotSaved'.tr);
           }
         }
 
@@ -140,23 +133,20 @@ class AuthController extends GetxController {
         isUserLoggedIn.value = true;
 
         errorMessage.value = '';
-        Get.snackbar(
-          AppLocalizations.of(Get.context!).success,
-          AppLocalizations.of(Get.context!).accountCreatedSuccessfully,
-        );
+        Get.snackbar('success'.tr, 'accountCreatedSuccessfully'.tr);
 
         // Add user to all users list
         await UserService.saveUserToAllUsersList(user);
 
         return true;
       } else {
-        errorMessage.value = AppLocalizations.of(Get.context!).failedToAddPost;
-        Get.snackbar(AppLocalizations.of(Get.context!).error, errorMessage.value);
+        errorMessage.value = 'failedToAddPost'.tr;
+        Get.snackbar('error'.tr, errorMessage.value);
         return false;
       }
     } catch (e) {
-      errorMessage.value = '${AppLocalizations.of(Get.context!).error}: $e';
-      Get.snackbar(AppLocalizations.of(Get.context!).error, errorMessage.value);
+      errorMessage.value = '${'error'.tr}: $e';
+      Get.snackbar('error'.tr, errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
@@ -198,10 +188,7 @@ class AuthController extends GetxController {
             requesterUserId: currentUser.value!.id,
           );
           if (!ok) {
-            Get.snackbar(
-              AppLocalizations.of(Get.context!).error,
-              AppLocalizations.of(Get.context!).failedToSaveWorkerProfile,
-            );
+            Get.snackbar('error'.tr, 'failedToSaveWorkerProfile'.tr);
             // لكن نستمر ونحدث user المحلي
           }
         }
@@ -214,25 +201,16 @@ class AuthController extends GetxController {
         // Notify that a post has been added/updated
         notifyPostAdded();
 
-        Get.snackbar(
-          AppLocalizations.of(Get.context!).success,
-          AppLocalizations.of(Get.context!).dataUpdatedSuccessfully,
-        );
+        Get.snackbar('success'.tr, 'dataUpdatedSuccessfully'.tr);
         print('AuthController: User update successful');
         return true;
       } else {
-        Get.snackbar(
-          AppLocalizations.of(Get.context!).error,
-          AppLocalizations.of(Get.context!).errorOccurredWhileDeletingPost,
-        );
+        Get.snackbar('error'.tr, 'errorOccurredWhileDeletingPost'.tr);
         print('AuthController: User update failed');
         return false;
       }
     } catch (e) {
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        '${AppLocalizations.of(Get.context!).error}: $e',
-      );
+      Get.snackbar('error'.tr, '${'error'.tr}: $e');
       print('AuthController: User update error: $e');
       return false;
     } finally {
@@ -249,23 +227,14 @@ class AuthController extends GetxController {
       if (deleted) {
         currentUser.value = null;
         isUserLoggedIn.value = false;
-        Get.snackbar(
-          AppLocalizations.of(Get.context!).success,
-          AppLocalizations.of(Get.context!).loggedOutSuccessfully,
-        );
+        Get.snackbar('success'.tr, 'loggedOutSuccessfully'.tr);
         return true;
       } else {
-        Get.snackbar(
-          AppLocalizations.of(Get.context!).error,
-          AppLocalizations.of(Get.context!).failedToDeletePost,
-        );
+        Get.snackbar('error'.tr, 'failedToDeletePost'.tr);
         return false;
       }
     } catch (e) {
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        '${AppLocalizations.of(Get.context!).error}: $e',
-      );
+      Get.snackbar('error'.tr, '${'error'.tr}: $e');
       return false;
     } finally {
       isLoading.value = false;
@@ -294,17 +263,11 @@ class AuthController extends GetxController {
           if (fileSize > 0) {
             return image.path;
           } else {
-            Get.snackbar(
-              AppLocalizations.of(Get.context!).error,
-              AppLocalizations.of(Get.context!).invalidProjectData,
-            );
+            Get.snackbar('error'.tr, 'invalidProjectData'.tr);
             return null;
           }
         } else {
-          Get.snackbar(
-            AppLocalizations.of(Get.context!).error,
-            AppLocalizations.of(Get.context!).failedToDeletePost,
-          );
+          Get.snackbar('error'.tr, 'failedToDeletePost'.tr);
           return null;
         }
       } else {
@@ -312,16 +275,10 @@ class AuthController extends GetxController {
         return null;
       }
     } on Exception catch (e) {
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        '${AppLocalizations.of(Get.context!).failedToChangeLikeStatus}: ${e.toString()}',
-      );
+      Get.snackbar('error'.tr, '${'failedToChangeLikeStatus'.tr}: ${e.toString()}');
       return null;
     } catch (e) {
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        '${AppLocalizations.of(Get.context!).errorOccurredWhileDeletingPost}: ${e.toString()}',
-      );
+      Get.snackbar('error'.tr, '${'errorOccurredWhileDeletingPost'.tr}: ${e.toString()}');
       return null;
     }
   }
@@ -393,10 +350,7 @@ class AuthController extends GetxController {
       return true;
     } catch (e) {
       print('AuthController: Error toggling like: $e');
-      Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        '${AppLocalizations.of(Get.context!).failedToChangeLikeStatus}: $e',
-      );
+      Get.snackbar('error'.tr, '${'failedToChangeLikeStatus'.tr}: $e');
       return false;
     }
   }

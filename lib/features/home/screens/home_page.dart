@@ -1,80 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Worker;
+import 'package:workers/features/profile/screens/worker_profile_page.dart';
 import 'dart:io';
 import 'package:workers/features/workers/controllers/worker_controller.dart';
 import 'package:workers/features/auth/controller/auth_controller.dart';
 import 'package:workers/features/home/controllers/home_config_controller.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
+import 'package:workers/features/home/controllers/home_controller.dart';
 import 'package:workers/features/workers/models/worker_model.dart';
-import 'package:workers/features/profile/screens/profile_page.dart';
-import 'package:workers/features/home/screens/favorites_page.dart';
+import 'package:workers/features/favorit/favorites_page.dart';
 import 'package:workers/features/posts/screens/posts_page.dart';
 import 'package:workers/features/account/screens/account_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Widget build(BuildContext context) {
+    final controller = Get.put(HomeController());
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-class _HomePageState extends State<HomePage> {
-  final WorkerController controller = Get.find<WorkerController>();
-  final HomeConfigController configController = Get.find<HomeConfigController>();
-  int _currentIndex = 0;
-
-  // Pages for bottom navigation
-  late final List<Widget> _pages;
-
-  @override
-  void initState() {
-    super.initState();
-    _pages = [
-      // Home content is built via helper methods below
-      HomeContent(controller: controller, configController: configController),
+    final pages = [
+      HomeContent(
+        controller: controller.workerController,
+        configController: controller.configController,
+      ),
       const FavoritesPage(),
       const PostsPage(),
-      // Account / profile tab
       const AccountPage(),
     ];
+
+    return Scaffold(
+      body: Obx(() => IndexedStack(index: controller.currentIndex.value, children: pages)),
+      bottomNavigationBar: _BottomNav(controller: controller, isDark: isDark),
+    );
   }
+}
+
+class _BottomNav extends StatelessWidget {
+  final HomeController controller;
+  final bool isDark;
+
+  const _BottomNav({required this.controller, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: _buildBottomNav(isDark),
-    );
-  }
-
-  Widget _buildBottomNav(bool isDark) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: _currentIndex,
-      onTap: (index) => setState(() => _currentIndex = index),
-      selectedItemColor: Color.fromARGB(255, 5, 95, 66),
-      unselectedItemColor: Colors.grey,
-      backgroundColor: isDark ? Color(0xFF1E1E1E) : Colors.white,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: AppLocalizations.of(context).homePageTitle,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: AppLocalizations.of(context).favoritesPageTitle,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: AppLocalizations.of(context).postsPageTitle,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: AppLocalizations.of(context).accountPageTitle,
-        ),
-      ],
+    return Obx(
+      () => BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: controller.currentIndex.value,
+        onTap: controller.changeTab,
+        selectedItemColor: Color.fromARGB(255, 5, 95, 66),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
+        ],
+      ),
     );
   }
 }
@@ -82,6 +66,7 @@ class _HomePageState extends State<HomePage> {
 class HomeContent extends StatelessWidget {
   final WorkerController controller;
   final HomeConfigController configController;
+
   const HomeContent({required this.controller, required this.configController, super.key});
 
   @override
@@ -90,15 +75,28 @@ class HomeContent extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      color: isDark ? Color(0xFF121212) : Colors.white,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF434B53), // أزرق رمادي داكن
+            Color(0xFF353E47), // رمادي مزرق
+          ],
+        ),
+      ),
       child: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeaderSection(authController),
+            _HeaderSection(authController: authController),
             SizedBox(height: 20),
-            _buildSearchBar(isDark),
+            _SearchBar(controller: controller, configController: configController, isDark: isDark),
             SizedBox(height: 20),
-            _buildTopWorkersSection(isDark),
+            _TopWorkersSection(
+              controller: controller,
+              configController: configController,
+              isDark: isDark,
+            ),
             SizedBox(height: 24),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -110,14 +108,18 @@ class HomeContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: Color(0xFFD6C3A5), // لون ذهبي فاتح للعناوين
                     ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 12),
-            _buildCategoriesFilter(isDark),
+            _CategoriesFilter(
+              controller: controller,
+              configController: configController,
+              isDark: isDark,
+            ),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -129,93 +131,114 @@ class HomeContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      color: Color(0xFFD6C3A5), // لون ذهبي فاتح للعناوين
                     ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 12),
-            _buildWorkersList(isDark),
+            _WorkersList(
+              controller: controller,
+              configController: configController,
+              isDark: isDark,
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildHeaderSection(AuthController authController) {
-    return Builder(
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color.fromARGB(255, 5, 95, 66), Color.fromARGB(255, 10, 150, 100)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Obx(() {
-                final user = authController.currentUser.value;
-                return Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [Color(0xFFFB923C), Color(0xFFEA580C)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+class _HeaderSection extends StatelessWidget {
+  final AuthController authController;
+
+  const _HeaderSection({required this.authController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          // colors: [Color.fromARGB(255, 5, 95, 66), Color.fromARGB(255, 10, 150, 100)],
+          colors: [Color.fromARGB(255, 48, 58, 67), Color.fromARGB(255, 53, 66, 78)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Obx(() {
+            final user = authController.currentUser.value;
+            return Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFB923C), Color(0xFFEA580C)],
+                      // colors: [Color(0xFFFB923C), Color(0xFFEA580C)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.white,
+                    backgroundImage: user?.imagePath != null && File(user!.imagePath).existsSync()
+                        ? FileImage(File(user.imagePath))
+                        : null,
+                    child: user?.imagePath == null || !File(user!.imagePath).existsSync()
+                        ? Icon(Icons.person, size: 32, color: Color.fromARGB(255, 5, 95, 66))
+                        : null,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'homePageTitle'.tr,
+                        style: TextStyle(color: Color.fromARGB(255, 186, 172, 159), fontSize: 14),
+                      ),
+                      Text(
+                        user?.name ?? 'client'.tr,
+                        style: TextStyle(
+                          color: Color(0xFFD6C3A5),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      child: CircleAvatar(
-                        radius: 28,
-                        backgroundColor: Colors.white,
-                        backgroundImage:
-                            user?.imagePath != null && File(user!.imagePath).existsSync()
-                            ? FileImage(File(user.imagePath))
-                            : null,
-                        child: user?.imagePath == null || !File(user!.imagePath).existsSync()
-                            ? Icon(Icons.person, size: 32, color: Color.fromARGB(255, 5, 95, 66))
-                            : null,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context).homePageTitle,
-                            style: TextStyle(color: Colors.white70, fontSize: 14),
-                          ),
-                          Text(
-                            user?.name ?? AppLocalizations.of(context).client,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }),
-            ],
-          ),
-        );
-      },
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildSearchBar(bool isDark) {
+class _SearchBar extends StatelessWidget {
+  final WorkerController controller;
+  final HomeConfigController configController;
+  final bool isDark;
+
+  const _SearchBar({
+    required this.controller,
+    required this.configController,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       color: Colors.transparent,
@@ -226,7 +249,7 @@ class HomeContent extends StatelessWidget {
           decoration: InputDecoration(
             hintText: configController.config.searchHint,
             hintStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
-            prefixIcon: Icon(Icons.search, color: Color.fromARGB(255, 5, 95, 66)),
+            prefixIcon: Icon(Icons.search, color: Colors.black),
             filled: true,
             fillColor: isDark ? Color(0xFF262626) : Colors.grey[100],
             border: OutlineInputBorder(
@@ -240,10 +263,22 @@ class HomeContent extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildTopWorkersSection(bool isDark) {
+class _TopWorkersSection extends StatelessWidget {
+  final WorkerController controller;
+  final HomeConfigController configController;
+  final bool isDark;
+
+  const _TopWorkersSection({
+    required this.controller,
+    required this.configController,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      // الحصول على أفضل العمال بناءً على التقييم
       final topWorkers = controller.workers.where((w) => w.rating >= 4.5).toList()
         ..sort((a, b) => b.rating.compareTo(a.rating));
 
@@ -262,13 +297,13 @@ class HomeContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: isDark ? Colors.white : Color(0xFFD6C3A5),
                 ),
               ),
             ),
           ),
           SizedBox(height: 12),
-          Container(
+          SizedBox(
             height: 210,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -276,7 +311,7 @@ class HomeContent extends StatelessWidget {
               itemCount: topWorkers.take(5).length,
               itemBuilder: (context, index) {
                 final worker = topWorkers[index];
-                return _buildTopWorkerCard(worker, isDark);
+                return _TopWorkerCard(worker: worker, isDark: isDark);
               },
             ),
           ),
@@ -284,36 +319,41 @@ class HomeContent extends StatelessWidget {
       );
     });
   }
+}
 
-  Widget _buildTopWorkerCard(Worker worker, bool isDark) {
+class _TopWorkerCard extends StatelessWidget {
+  final Worker worker;
+  final bool isDark;
+
+  const _TopWorkerCard({required this.worker, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: 160,
       margin: EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black26 : Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.10), blurRadius: 10, offset: Offset(0, 3)),
         ],
+        border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.22), width: 1.1),
       ),
       child: Material(
         borderRadius: BorderRadius.circular(12),
-        color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+        color: Colors.transparent,
         child: InkWell(
-          onTap: () => Get.to(() => WorkerProfilePage(worker: worker)),
+          onTap: () => Get.to(() => const WorkerProfilePage(), arguments: worker),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               gradient: LinearGradient(
                 colors: isDark
-                    ? [Color(0xFF1E1E1E), Color(0xFF262626)]
-                    : [Colors.white, Colors.grey[50]!],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                    ? [Color(0xFF353E47), Color(0xFF434B53)]
+                    : [Color(0xFF434B53), Color(0xFF353E47)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
             child: Column(
@@ -332,10 +372,10 @@ class HomeContent extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: 4,
-                      right: 4,
+                      top: 0.5,
+                      right: 0.5,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
                         decoration: BoxDecoration(
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(8),
@@ -381,7 +421,7 @@ class HomeContent extends StatelessWidget {
                         worker.category,
                         style: TextStyle(
                           fontSize: 11,
-                          color: Color.fromARGB(255, 5, 95, 66),
+                          color: Color.fromARGB(255, 250, 251, 251),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -404,8 +444,21 @@ class HomeContent extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildCategoriesFilter(bool isDark) {
+class _CategoriesFilter extends StatelessWidget {
+  final WorkerController controller;
+  final HomeConfigController configController;
+  final bool isDark;
+
+  const _CategoriesFilter({
+    required this.controller,
+    required this.configController,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: 50,
       color: Colors.transparent,
@@ -428,7 +481,9 @@ class HomeContent extends StatelessWidget {
                 selectedColor: Color.fromARGB(255, 5, 95, 66),
                 backgroundColor: isDark ? Color(0xFF262626) : Colors.grey[200],
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                  color: isSelected
+                      ? const Color.fromARGB(255, 163, 160, 160)
+                      : (isDark ? Colors.white70 : Colors.black87),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -438,8 +493,21 @@ class HomeContent extends StatelessWidget {
       }),
     );
   }
+}
 
-  Widget _buildWorkersList(bool isDark) {
+class _WorkersList extends StatelessWidget {
+  final WorkerController controller;
+  final HomeConfigController configController;
+  final bool isDark;
+
+  const _WorkersList({
+    required this.controller,
+    required this.configController,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
       final isLoading = controller.isLoading.value;
       final workers = controller.filteredWorkers.toList();
@@ -471,237 +539,289 @@ class HomeContent extends StatelessWidget {
             .map(
               (worker) => Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: _buildWorkerCard(worker, isDark),
+                child: _WorkerCard(worker: worker, controller: controller, isDark: isDark),
               ),
             )
             .toList(),
       );
     });
   }
+}
 
-  Widget _buildWorkerCard(Worker worker, bool isDark) {
-    return Builder(
-      builder: (BuildContext context) {
-        return Card(
-          margin: EdgeInsets.zero,
-          elevation: 3,
-          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          child: InkWell(
-            onTap: () => Get.to(() => WorkerProfilePage(worker: worker)),
+class _WorkerCard extends StatelessWidget {
+  final Worker worker;
+  final WorkerController controller;
+  final bool isDark;
+
+  const _WorkerCard({required this.worker, required this.controller, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 3,
+      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: InkWell(
+        onTap: () => Get.to(() => const WorkerProfilePage(), arguments: worker),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [Color(0xFF1E1E1E), Color(0xFF262626)]
-                      : [Colors.white, Colors.grey[50]!],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [Color(0xFF353E47), Color(0xFF434B53)]
+                  : [Color(0xFF434B53), Color(0xFF353E47)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: Offset(0, 4),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(14),
-                child: Column(
+            ],
+            border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.25), width: 1.2),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(14),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Stack(
                       children: [
-                        Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 38,
-                              backgroundImage: NetworkImage(worker.imageUrl),
-                              backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.star, size: 12, color: Colors.white),
-                                    SizedBox(width: 3),
-                                    Text(
-                                      '${worker.rating}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                        CircleAvatar(
+                          radius: 38,
+                          backgroundImage: NetworkImage(worker.imageUrl),
+                          backgroundColor: isDark ? Colors.grey[700] : Colors.grey[300],
                         ),
-                        SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                worker.name,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 6),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 5, 95, 66).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  worker.category,
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: Colors.amber,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.star, size: 12, color: Colors.white),
+                                SizedBox(width: 3),
+                                Text(
+                                  '${worker.rating}',
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color.fromARGB(255, 5, 95, 66),
-                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            worker.name,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 235, 238, 237).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              worker.category,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color.fromARGB(255, 235, 238, 237),
+                                fontWeight: FontWeight.w600,
                               ),
-                              SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    worker.city,
-                                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                                  ),
-                                ],
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on,
+                                size: 14,
+                                color: const Color.fromARGB(255, 243, 239, 239),
                               ),
-                              SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.work_history, size: 14, color: Colors.grey[600]),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '${worker.experience} ${AppLocalizations.of(context).yearsOfExperience}',
-                                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-                                  ),
-                                ],
+                              SizedBox(width: 4),
+                              Text(
+                                worker.city,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: const Color.fromARGB(255, 211, 204, 204),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        Obx(() {
-                          final currentWorker = controller.workers.firstWhere(
-                            (w) => w.id == worker.id,
-                            orElse: () => worker,
-                          );
-                          return IconButton(
-                            icon: Icon(
-                              currentWorker.isFollowing ? Icons.favorite : Icons.favorite_border,
-                              color: currentWorker.isFollowing ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () => controller.toggleFollow(currentWorker),
-                          );
-                        }),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isDark ? Color(0xFF262626) : Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildStatColumn(
-                            AppLocalizations.of(context).reviews,
-                            '${worker.reviewsCount}',
-                            Icons.rate_review,
-                            isDark,
-                          ),
-                          _buildStatColumn(
-                            AppLocalizations.of(context).followers,
-                            '${worker.followersCount}',
-                            Icons.people,
-                            isDark,
-                          ),
-                          _buildStatColumn(
-                            AppLocalizations.of(context).rating,
-                            '${worker.rating}',
-                            Icons.star,
-                            isDark,
+                          SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.work_history,
+                                size: 14,
+                                color: const Color.fromARGB(255, 211, 204, 204),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                '${worker.experience} ${'yearsOfExperience'.tr}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: const Color.fromARGB(255, 211, 204, 204),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => controller.makePhoneCall(worker.phone),
-                            icon: Icon(Icons.phone, size: 18),
-                            label: Text(AppLocalizations.of(context).phone),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromARGB(255, 5, 95, 66),
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ),
+                    Obx(() {
+                      final currentWorker = controller.workers.firstWhere(
+                        (w) => w.id == worker.id,
+                        orElse: () => worker,
+                      );
+                      return IconButton(
+                        icon: Icon(
+                          currentWorker.isFollowing ? Icons.favorite : Icons.favorite_border,
+                          color: currentWorker.isFollowing ? Colors.red : Colors.grey,
                         ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => controller.openWhatsApp(worker.whatsapp),
-                            icon: Icon(Icons.chat, size: 18),
-                            label: Text('WhatsApp'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green[600],
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ),
+                        onPressed: () => controller.toggleFollow(currentWorker),
+                      );
+                    }),
+                  ],
+                ),
+                SizedBox(height: 12),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [Color(0xFF434B53), Color(0xFF353E47)]
+                          : [Color(0xFF353E47), Color(0xFF434B53)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.18), width: 1),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _StatColumn(
+                        label: 'reviews'.tr,
+                        value: '${worker.reviewsCount}',
+                        icon: Icons.rate_review,
+                        isDark: isDark,
+                      ),
+                      _StatColumn(
+                        label: 'followers'.tr,
+                        value: '${worker.followersCount}',
+                        icon: Icons.people,
+                        isDark: isDark,
+                      ),
+                      _StatColumn(
+                        label: 'rating'.tr,
+                        value: '${worker.rating}',
+                        icon: Icons.star,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => controller.makePhoneCall(worker.phone),
+                        icon: Icon(Icons.phone, size: 18),
+                        label: Text('phone'.tr),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 5, 95, 66),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
-                      ],
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => controller.openWhatsApp(worker.whatsapp),
+                        icon: Icon(Icons.chat, size: 18),
+                        label: Text('WhatsApp'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[600],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildStatColumn(String label, String value, IconData icon, bool isDark) {
+class _StatColumn extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final bool isDark;
+
+  const _StatColumn({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 18, color: Color.fromARGB(255, 5, 95, 66)),
+        Icon(icon, size: 18, color: Color.fromARGB(255, 229, 182, 111)),
         SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
+            color: isDark ? Colors.white : Color(0xFFD6C3A5),
           ),
         ),
         SizedBox(height: 2),
-        Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
+        Text(
+          label,
+          style: TextStyle(fontSize: 10, color: const Color.fromARGB(255, 172, 171, 171)),
+        ),
       ],
     );
   }

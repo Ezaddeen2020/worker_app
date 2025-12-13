@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../services/post_service.dart';
 import '../../../widgets/project_card.dart';
 
@@ -16,7 +15,7 @@ class PostsPage extends StatelessWidget {
       backgroundColor: isDark ? Color(0xFF121212) : Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).posts,
+          'posts'.tr,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black,
@@ -47,7 +46,7 @@ class PostsPage extends StatelessWidget {
                   children: [
                     Center(
                       child: Text(
-                        AppLocalizations.of(context).noPostsFound,
+                        'noPostsFound'.tr,
                         style: TextStyle(color: isDark ? Colors.white : Colors.black),
                       ),
                     ),
@@ -73,3 +72,4 @@ class PostsPage extends StatelessWidget {
     );
   }
 }
+

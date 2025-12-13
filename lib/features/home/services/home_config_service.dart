@@ -10,7 +10,7 @@ class HomeConfigService {
     return HomeConfig(
       headerTitle: 'أهلاً وسهلاً',
       headerSubtitle: 'مرحباً بك في تطبيق العمال والحرفيين',
-      searchHint: 'ابحث عن عامل أو مدينة...',
+      searchHint: 'ابحث عن عامل  ...',
       featuredWorkersTitle: 'العمال المميزين',
       categoriesTitle: 'اختر من التخصصات',
       allWorkersTitle: 'جميع العمال والحرفيين',

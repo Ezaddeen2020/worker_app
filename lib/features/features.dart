@@ -23,7 +23,7 @@ export 'profile/profile.dart';
 export 'reviews/reviews.dart';
 
 // Home Feature
-export 'home/home.dart';
+export 'home/screens/home.dart';
 
 // Settings Feature
 export 'settings/settings.dart';

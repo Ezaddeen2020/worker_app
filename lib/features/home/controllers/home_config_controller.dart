@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:workers/core/localization/localization_delegate.dart';
 import '../models/home_config_model.dart';
 import '../services/home_config_service.dart';
 
@@ -32,8 +31,8 @@ class HomeConfigController extends GetxController {
       // Validate the config before saving
       if (!newConfig.isValid()) {
         Get.snackbar(
-          AppLocalizations.of(Get.context!).error,
-          AppLocalizations.of(Get.context!).invalidProjectData,
+          'error'.tr,
+          'invalidProjectData'.tr,
         );
         return;
       }
@@ -43,8 +42,8 @@ class HomeConfigController extends GetxController {
     } catch (e) {
       print('Error saving config: $e');
       Get.snackbar(
-        AppLocalizations.of(Get.context!).error,
-        AppLocalizations.of(Get.context!).failedToAddPost,
+        'error'.tr,
+        'failedToAddPost'.tr,
       );
     }
   }
@@ -109,3 +108,4 @@ class HomeConfigController extends GetxController {
     await saveConfig(defaultConfig);
   }
 }
+

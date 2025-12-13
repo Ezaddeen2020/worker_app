@@ -45,9 +45,9 @@ class HeaderAccountPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStatColumn('$postsCount', 'منشورات', isDark),
-                    _buildStatColumn('0', 'متابعون', isDark),
-                    _buildStatColumn('0', 'يتابع', isDark),
+                    _buildStatColumn('$postsCount', 'posts'.tr, isDark),
+                    _buildStatColumn('0', 'followersCount'.tr, isDark),
+                    _buildStatColumn('0', 'followingCount'.tr, isDark),
                   ],
                 ),
               ),
@@ -76,7 +76,7 @@ class HeaderAccountPage extends StatelessWidget {
                 children: [
                   if (user.role == 'worker')
                     Text(
-                      '👷 عامل محترف',
+                      'professionalWorker'.tr,
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -84,7 +84,7 @@ class HeaderAccountPage extends StatelessWidget {
                     )
                   else
                     Text(
-                      '👤 عميل',
+                      'clientUser'.tr,
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -107,7 +107,7 @@ class HeaderAccountPage extends StatelessWidget {
               SizedBox(height: 6),
               // Member Since
               Text(
-                'عضو منذ ${_formatDateShort(user.createdAt)}',
+                '${'memberSince'.tr} ${_formatDateShort(user.createdAt)}',
                 style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
               // Phone Number
@@ -136,7 +136,7 @@ class HeaderAccountPage extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: _buildActionButton(
-                  label: 'تعديل الملف الشخصي',
+                  label: 'editProfileBtn'.tr,
                   onPressed: onEditProfilePressed,
                   isPrimary: false,
                   isDark: isDark,
@@ -146,7 +146,7 @@ class HeaderAccountPage extends StatelessWidget {
               // Share Profile Button
               Expanded(
                 child: _buildActionButton(
-                  label: 'مشاركة',
+                  label: 'shareProfile'.tr,
                   onPressed: () => _shareProfile(),
                   isPrimary: false,
                   isDark: isDark,
@@ -158,8 +158,8 @@ class HeaderAccountPage extends StatelessWidget {
                 icon: Icons.person_add_outlined,
                 onPressed: () {
                   Get.snackbar(
-                    'قريباً',
-                    'اقترح صديق',
+                    'comingSoon'.tr,
+                    'suggestFriend'.tr,
                     snackPosition: SnackPosition.BOTTOM,
                     duration: Duration(seconds: 2),
                   );
@@ -314,10 +314,10 @@ class HeaderAccountPage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12),
         children: [
           _buildNewHighlight(isDark),
-          _buildHighlightItem('أعمالي', null, isDark),
-          _buildHighlightItem('تصاميم', null, isDark),
-          _buildHighlightItem('مشاريع', null, isDark),
-          _buildHighlightItem('شهادات', null, isDark),
+          _buildHighlightItem('myWorks'.tr, null, isDark),
+          _buildHighlightItem('designs'.tr, null, isDark),
+          _buildHighlightItem('projectsHighlight'.tr, null, isDark),
+          _buildHighlightItem('certificates'.tr, null, isDark),
         ],
       ),
     );
@@ -330,7 +330,11 @@ class HeaderAccountPage extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Get.snackbar('قريباً', 'ميزة القصص قيد التطوير', snackPosition: SnackPosition.BOTTOM);
+              Get.snackbar(
+                'comingSoon'.tr,
+                'storiesFeature'.tr,
+                snackPosition: SnackPosition.BOTTOM,
+              );
             },
             child: Container(
               width: 68,
@@ -347,7 +351,7 @@ class HeaderAccountPage extends StatelessWidget {
           ),
           SizedBox(height: 6),
           Text(
-            'جديد',
+            'new'.tr,
             style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -364,7 +368,7 @@ class HeaderAccountPage extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Get.snackbar('قريباً', 'عرض القصة: $title', snackPosition: SnackPosition.BOTTOM);
+              Get.snackbar('comingSoon'.tr, title, snackPosition: SnackPosition.BOTTOM);
             },
             child: Container(
               width: 68,
@@ -444,8 +448,8 @@ class HeaderAccountPage extends StatelessWidget {
 
   void _shareProfile() {
     Get.snackbar(
-      'مشاركة الملف الشخصي',
-      'سيتم مشاركة ملف ${user.name}',
+      'shareProfileTitle'.tr,
+      '${'shareProfileMessage'.tr} ${user.name}',
       snackPosition: SnackPosition.BOTTOM,
       duration: Duration(seconds: 2),
       backgroundColor: Colors.black87,
@@ -460,14 +464,14 @@ class HeaderAccountPage extends StatelessWidget {
 
     if (difference.inDays > 365) {
       final years = (difference.inDays / 365).floor();
-      return '$years ${years == 1 ? "سنة" : "سنوات"}';
+      return '$years ${years == 1 ? 'year'.tr : 'years'.tr}';
     } else if (difference.inDays > 30) {
       final months = (difference.inDays / 30).floor();
-      return '$months ${months == 1 ? "شهر" : "أشهر"}';
+      return '$months ${months == 1 ? 'month'.tr : 'months'.tr}';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} ${difference.inDays == 1 ? "يوم" : "أيام"}';
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day'.tr : 'days'.tr}';
     } else {
-      return 'اليوم';
+      return 'today'.tr;
     }
   }
 }

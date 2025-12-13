@@ -1,55 +1,29 @@
 // account_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:workers/features/auth/controller/auth_controller.dart';
-import 'package:workers/features/posts/services/post_service.dart';
-import 'package:workers/features/auth/screens/register_page.dart';
-import 'package:workers/features/settings/screens/setting_page.dart';
-import 'package:workers/widgets/add_project_dialog.dart';
-import 'package:workers/widgets/edit_profile_dialog.dart';
+import 'package:workers/features/account/controllers/account_controller.dart';
 import 'package:workers/features/account/screens/header_account_page.dart';
 import 'package:workers/features/account/screens/body_account_page.dart';
 
-class AccountPage extends StatefulWidget {
+class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
-}
-
-class _AccountPageState extends State<AccountPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final AuthController authController = Get.find<AuthController>();
+    final controller = Get.put(AccountController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Obx(() {
-      if (!authController.isUserLoggedIn.value || authController.currentUser.value == null) {
+      if (!controller.authController.isUserLoggedIn.value ||
+          controller.authController.currentUser.value == null) {
         return Scaffold(
           backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
-          body: _buildNotLoggedInView(context, isDark),
+          body: _NotLoggedInView(controller: controller, isDark: isDark),
         );
       }
 
-      final user = authController.currentUser.value!;
-      // Debug: print user info to console
+      final user = controller.authController.currentUser.value!;
       print('AccountPage: user.role = ${user.role}, workerProfile = ${user.workerProfile != null}');
-      // Show add button for ALL users (workers can post, clients can become workers)
-      final isWorker = true; // Allow all users to add posts
 
       return Scaffold(
         backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
@@ -65,7 +39,8 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                 floating: true,
                 title: Row(
                   children: [
-                    Icon(Icons.lock_outline, size: 16, color: isDark ? Colors.white : Colors.black),
+                    Icon(Icons.lock_outline,
+                        size: 16, color: isDark ? Colors.white : Colors.black),
                     SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -86,20 +61,20 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                   ],
                 ),
                 actions: [
-                  if (isWorker)
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_box_outlined,
-                        size: 28,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                      onPressed: () => _showAddProjectDialog(context, user, authController),
-                      tooltip: 'إضافة منشور جديد',
-                    ),
                   IconButton(
-                    icon: Icon(Icons.menu, size: 28, color: isDark ? Colors.white : Colors.black),
-                    onPressed: () => _showOptionsMenu(context, authController, user, isDark),
-                    tooltip: 'القائمة',
+                    icon: Icon(
+                      Icons.add_box_outlined,
+                      size: 28,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                    onPressed: () => controller.showAddProjectDialog(context),
+                    tooltip: 'addNewPost'.tr,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.menu,
+                        size: 28, color: isDark ? Colors.white : Colors.black),
+                    onPressed: () => controller.showOptionsMenu(context, isDark),
+                    tooltip: 'menu'.tr,
                   ),
                 ],
               ),
@@ -111,10 +86,12 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               SliverToBoxAdapter(
                 child: HeaderAccountPage(
                   user: user,
-                  authController: authController,
+                  authController: controller.authController,
                   context: context,
-                  onEditProfilePressed: () => _showEditProfileDialog(context, authController, user),
-                  onMenuPressed: () => _showOptionsMenu(context, authController, user, isDark),
+                  onEditProfilePressed: () =>
+                      controller.showEditProfileDialog(context),
+                  onMenuPressed: () =>
+                      controller.showOptionsMenu(context, isDark),
                 ),
               ),
 
@@ -123,7 +100,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                 pinned: true,
                 delegate: _SliverAppBarDelegate(
                   TabBar(
-                    controller: _tabController,
+                    controller: controller.tabController,
                     indicatorColor: isDark ? Colors.white : Colors.black,
                     indicatorWeight: 1,
                     labelColor: isDark ? Colors.white : Colors.black,
@@ -141,14 +118,17 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               // Tab Content
               SliverFillRemaining(
                 child: TabBarView(
-                  controller: _tabController,
+                  controller: controller.tabController,
                   children: [
                     // Posts
-                    BodyAccountPage(user: user, authController: authController, context: context),
+                    BodyAccountPage(
+                        user: user,
+                        authController: controller.authController,
+                        context: context),
                     // Tagged
-                    _buildTaggedSection(),
+                    _TaggedSection(isDark: isDark),
                     // Saved
-                    _buildSavedSection(),
+                    _SavedSection(isDark: isDark),
                   ],
                 ),
               ),
@@ -156,7 +136,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => _showAddProjectDialog(context, user, authController),
+          onPressed: () => controller.showAddProjectDialog(context),
           backgroundColor: Color.fromARGB(255, 5, 95, 66),
           elevation: 6,
           child: Icon(Icons.add, size: 30, color: Colors.white),
@@ -164,8 +144,16 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
       );
     });
   }
+}
 
-  Widget _buildNotLoggedInView(BuildContext context, bool isDark) {
+class _NotLoggedInView extends StatelessWidget {
+  final AccountController controller;
+  final bool isDark;
+
+  const _NotLoggedInView({required this.controller, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: EdgeInsets.all(32),
@@ -179,7 +167,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
             ),
             SizedBox(height: 32),
             Text(
-              'لم تقم بتسجيل الدخول',
+              'notLoggedIn'.tr,
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -188,7 +176,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
             ),
             SizedBox(height: 12),
             Text(
-              'قم بإنشاء حساب للبدء في مشاركة\nأعمالك والتواصل مع العملاء',
+              'createAccountToStart'.tr,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
@@ -197,24 +185,25 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () => Get.to(() => const RegisterPage()),
+                onPressed: controller.goToRegisterPage,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF0095F6),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
                 child: Text(
-                  'إنشاء حساب جديد',
+                  'createNewAccount'.tr,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
             SizedBox(height: 16),
             TextButton(
-              onPressed: () => Get.to(() => const RegisterPage()),
+              onPressed: controller.goToRegisterPage,
               child: Text(
-                'لديك حساب بالفعل؟ تسجيل الدخول',
+                'alreadyHaveAccount'.tr,
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFF0095F6),
@@ -227,9 +216,15 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
       ),
     );
   }
+}
 
-  Widget _buildTaggedSection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+class _TaggedSection extends StatelessWidget {
+  final bool isDark;
+
+  const _TaggedSection({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
         child: Padding(
@@ -243,7 +238,8 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
+                  border:
+                      Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
                 ),
                 child: Icon(
                   Icons.person_pin_outlined,
@@ -253,7 +249,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               ),
               SizedBox(height: 24),
               Text(
-                'الصور والفيديوهات التي تم الإشارة إليك فيها',
+                'taggedPhotos'.tr,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -263,7 +259,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               ),
               SizedBox(height: 12),
               Text(
-                'عندما يشير إليك الأشخاص في الصور\nومقاطع الفيديو، ستظهر هنا',
+                'taggedDescription'.tr,
                 style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
@@ -273,9 +269,15 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
       ),
     );
   }
+}
 
-  Widget _buildSavedSection() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+class _SavedSection extends StatelessWidget {
+  final bool isDark;
+
+  const _SavedSection({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
         child: Padding(
@@ -289,7 +291,8 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
+                  border:
+                      Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
                 ),
                 child: Icon(
                   Icons.bookmark_border,
@@ -299,7 +302,7 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               ),
               SizedBox(height: 24),
               Text(
-                'حفظ',
+                'save'.tr,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -308,145 +311,13 @@ class _AccountPageState extends State<AccountPage> with SingleTickerProviderStat
               ),
               SizedBox(height: 12),
               Text(
-                'احفظ الصور والفيديوهات التي تريد\nرؤيتها مرة أخرى. لن يعلم أحد بما تحفظه',
+                'savedDescription'.tr,
                 style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void _showAddProjectDialog(BuildContext context, dynamic user, AuthController authController) {
-    final postService = Get.isRegistered<PostService>()
-        ? Get.find<PostService>()
-        : Get.put<PostService>(PostService(), permanent: true);
-    Get.dialog(
-      AddProjectDialog(user: user, authController: authController, postService: postService),
-      barrierDismissible: false,
-    );
-  }
-
-  void _showEditProfileDialog(BuildContext context, AuthController authController, dynamic user) {
-    Get.dialog(
-      EditProfileDialog(user: user, authController: authController),
-      barrierDismissible: false,
-    );
-  }
-
-  void _showOptionsMenu(
-    BuildContext context,
-    AuthController authController,
-    dynamic user,
-    bool isDark,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: isDark ? Color(0xFF1E1E1E) : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[600] : Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              _buildMenuOption(Icons.settings_outlined, 'الإعدادات', () {
-                Get.back();
-                Get.to(() => const SettingsPage());
-              }, isDark: isDark),
-              _buildMenuOption(Icons.history, 'نشاطك', () {
-                Get.back();
-                Get.snackbar('قريباً', 'صفحة النشاط قيد التطوير');
-              }, isDark: isDark),
-              _buildMenuOption(Icons.qr_code_2, 'رمز QR', () {
-                Get.back();
-                Get.snackbar('قريباً', 'رمز QR الخاص بك');
-              }, isDark: isDark),
-              _buildMenuOption(Icons.bookmark_outline, 'المحفوظات', () {
-                Get.back();
-                _tabController.animateTo(2);
-              }, isDark: isDark),
-              Divider(height: 1, color: isDark ? Colors.grey[700] : Colors.grey[300]),
-              _buildMenuOption(
-                Icons.logout,
-                'تسجيل الخروج',
-                () {
-                  Get.back();
-                  _showLogoutDialog(context, authController);
-                },
-                isDestructive: true,
-                isDark: isDark,
-              ),
-              SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildMenuOption(
-    IconData icon,
-    String title,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-    bool isDark = false,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isDestructive ? Colors.red : (isDark ? Colors.white : Colors.black87),
-        size: 26,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: isDestructive ? Colors.red : (isDark ? Colors.white : Colors.black87),
-        ),
-      ),
-      onTap: onTap,
-      contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context, AuthController authController) {
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('تسجيل الخروج', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد من تسجيل الخروج من حسابك؟', style: TextStyle(fontSize: 15)),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(color: Colors.black87, fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-              Get.back();
-              await authController.logout();
-              Get.offAll(() => const RegisterPage());
-            },
-            child: Text(
-              'تسجيل الخروج',
-              style: TextStyle(color: Colors.red, fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -470,5 +341,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => oldDelegate.isDark != isDark;
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) =>
+      oldDelegate.isDark != isDark;
 }

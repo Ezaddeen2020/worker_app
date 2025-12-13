@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:workers/features/auth/screens/splash_screen.dart';
 import 'package:workers/features/home/screens/home_page.dart';
 import 'package:workers/features/auth/screens/register_page.dart';
-import 'package:workers/features/home/screens/favorites_page.dart';
+import 'package:workers/features/favorit/favorites_page.dart';
 import 'package:workers/features/posts/screens/posts_page.dart';
 import 'package:workers/features/account/screens/account_page.dart';
 import 'package:workers/features/settings/screens/setting_page.dart';
