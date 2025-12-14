@@ -39,9 +39,11 @@ class SettingsMetaSection extends StatelessWidget {
     margin: const EdgeInsets.symmetric(horizontal: 16),
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: isDark ? Color(0xFF1E1E1E) : Colors.grey[50],
+      color: isDark ? Color(0xFF1E1E1E) : Color.fromRGBO(231, 230, 226, 0.2),
       borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
+      border: Border.all(
+        color: isDark ? Colors.grey[800]! : const Color.fromARGB(255, 56, 55, 55)!,
+      ),
     ),
     child: Row(
       children: [

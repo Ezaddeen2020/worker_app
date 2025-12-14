@@ -19,6 +19,8 @@ class HomePage extends StatelessWidget {
     final controller = Get.put(HomeController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final pageController = PageController(initialPage: controller.currentIndex.value);
+
     final pages = [
       HomeContent(
         controller: controller.workerController,
@@ -29,9 +31,29 @@ class HomePage extends StatelessWidget {
       const AccountPage(),
     ];
 
+    void onPageChanged(int index) {
+      controller.currentIndex.value = index;
+    }
+
+    void onNavTap(int index) {
+      controller.changeTab(index);
+      pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    }
+
     return Scaffold(
-      body: Obx(() => IndexedStack(index: controller.currentIndex.value, children: pages)),
-      bottomNavigationBar: _BottomNav(controller: controller, isDark: isDark),
+      body: Obx(
+        () => PageView(
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          children: pages,
+          physics: const BouncingScrollPhysics(),
+        ),
+      ),
+      bottomNavigationBar: _BottomNav(controller: controller, isDark: isDark, onTap: onNavTap),
     );
   }
 }
@@ -39,25 +61,36 @@ class HomePage extends StatelessWidget {
 class _BottomNav extends StatelessWidget {
   final HomeController controller;
   final bool isDark;
+  final void Function(int)? onTap;
 
-  const _BottomNav({required this.controller, required this.isDark});
+  const _BottomNav({required this.controller, required this.isDark, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: controller.currentIndex.value,
-        onTap: controller.changeTab,
-        selectedItemColor: Color.fromARGB(255, 5, 95, 66),
-        unselectedItemColor: Colors.grey,
-        backgroundColor: isDark ? Color(0xFF1E1E1E) : Colors.white,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
-        ],
+      () => Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.transparent,
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: controller.currentIndex.value,
+          onTap: onTap ?? controller.changeTab,
+          backgroundColor: Colors.black,
+          selectedItemColor: Color.fromARGB(255, 215, 184, 133),
+          unselectedItemColor: Colors.grey,
+          elevation: 0,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
+          ],
+        ),
       ),
     );
   }
@@ -160,8 +193,10 @@ class _HeaderSection extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          // colors: [Color.fromARGB(255, 5, 95, 66), Color.fromARGB(255, 10, 150, 100)],
-          colors: [Color.fromARGB(255, 48, 58, 67), Color.fromARGB(255, 53, 66, 78)],
+          colors: [
+            Color(0xFF434B53), // نفس لون بداية البودي
+            Color(0xFF353E47), // نفس لون نهاية البودي
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -241,20 +276,25 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      color: Colors.transparent,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.07), blurRadius: 8, offset: Offset(0, 2)),
+        ],
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Obx(
         () => TextField(
           textAlign: TextAlign.right,
           style: TextStyle(color: isDark ? Colors.white : Colors.black),
           decoration: InputDecoration(
             hintText: configController.config.searchHint,
-            hintStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+            hintStyle: TextStyle(color: isDark ? Colors.grey[300] : Colors.grey[700]),
             prefixIcon: Icon(Icons.search, color: Colors.black),
             filled: true,
-            fillColor: isDark ? Color(0xFF262626) : Colors.grey[100],
+            fillColor: Color.fromARGB(255, 231, 230, 226),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: Colors.black12, width: 1),
             ),
             contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           ),
@@ -478,11 +518,11 @@ class _CategoriesFilter extends StatelessWidget {
                 label: Text(category.displayName),
                 selected: isSelected,
                 onSelected: (selected) => controller.filterByCategory(category.name),
-                selectedColor: Color.fromARGB(255, 5, 95, 66),
+                selectedColor: Color(0xFFD6C3A5),
                 backgroundColor: isDark ? Color(0xFF262626) : Colors.grey[200],
                 labelStyle: TextStyle(
                   color: isSelected
-                      ? const Color.fromARGB(255, 163, 160, 160)
+                      ? const Color.fromARGB(255, 41, 39, 39)
                       : (isDark ? Colors.white70 : Colors.black87),
                   fontWeight: FontWeight.bold,
                 ),
@@ -559,7 +599,7 @@ class _WorkerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
-      elevation: 3,
+      elevation: 5,
       color: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: InkWell(
@@ -577,15 +617,15 @@ class _WorkerCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
-                offset: Offset(0, 4),
+                color: Colors.black.withOpacity(0.13),
+                blurRadius: 16,
+                offset: Offset(0, 6),
               ),
             ],
-            border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.25), width: 1.2),
+            border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.32), width: 1.3),
           ),
           child: Padding(
-            padding: EdgeInsets.all(14),
+            padding: EdgeInsets.all(0),
             child: Column(
               children: [
                 Row(
@@ -637,7 +677,15 @@ class _WorkerCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87,
+                              color: isDark ? Colors.white : Colors.black,
+                              shadows: [
+                                if (!isDark)
+                                  Shadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 1),
+                                  ),
+                              ],
                             ),
                           ),
                           SizedBox(height: 6),
@@ -754,11 +802,11 @@ class _WorkerCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () => controller.makePhoneCall(worker.phone),
-                        icon: Icon(Icons.phone, size: 18),
+                        icon: Icon(Icons.phone, size: 18, color: Colors.black),
                         label: Text('phone'.tr),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 5, 95, 66),
-                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromARGB(255, 231, 230, 226),
+                          foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
@@ -768,11 +816,11 @@ class _WorkerCard extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () => controller.openWhatsApp(worker.whatsapp),
-                        icon: Icon(Icons.chat, size: 18),
+                        icon: Icon(Icons.chat, size: 18, color: Colors.black),
                         label: Text('WhatsApp'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green[600],
-                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromARGB(255, 231, 230, 226),
+                          foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),

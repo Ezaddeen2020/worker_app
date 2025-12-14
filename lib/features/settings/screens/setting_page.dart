@@ -17,9 +17,9 @@ class SettingsPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
+      backgroundColor: isDark ? Color(0xFF121212) : Color(0xFF353E47),
       appBar: AppBar(
-        backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
+        backgroundColor: isDark ? Color(0xFF121212) : Color(0xFF353E47),
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : Colors.black),
@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDark ? Color(0xFF2C2C2C) : Colors.grey[100],
+                  color: isDark ? Color(0xFF2C2C2C) : Color.fromRGBO(231, 230, 226, 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: TextField(
