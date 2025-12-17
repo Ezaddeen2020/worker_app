@@ -233,65 +233,66 @@ class WorkerProfilePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-      child: Obx(() {
-        final currentWorker = workerController.workers.firstWhere(
-          (w) => w.id == controller.worker.id,
-          orElse: () => controller.worker,
-        );
-
-        return Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => workerController.toggleFollow(currentWorker),
-                icon: Icon(currentWorker.isFollowing ? Icons.favorite : Icons.favorite_border),
-                label: Text(currentWorker.isFollowing ? 'following'.tr : 'follow'.tr),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: currentWorker.isFollowing
-                      ? Colors.red.withValues(alpha: 0.2)
-                      : const Color.fromARGB(255, 5, 95, 66),
-                  foregroundColor: currentWorker.isFollowing ? Colors.red : Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: currentWorker.isFollowing
-                        ? const BorderSide(color: Colors.red, width: 1.5)
-                        : BorderSide.none,
+      child: Builder(
+        builder: (context) {
+          final currentWorker = workerController.workers.firstWhere(
+            (w) => w.id == controller.worker.id,
+            orElse: () => controller.worker,
+          );
+          return Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => workerController.toggleFollow(currentWorker),
+                  icon: Icon(currentWorker.isFollowing ? Icons.favorite : Icons.favorite_border),
+                  label: Text(currentWorker.isFollowing ? 'following'.tr : 'follow'.tr),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: currentWorker.isFollowing
+                        ? Colors.red.withValues(alpha: 0.2)
+                        : const Color.fromARGB(255, 5, 95, 66),
+                    foregroundColor: currentWorker.isFollowing ? Colors.red : Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: currentWorker.isFollowing
+                          ? const BorderSide(color: Colors.red, width: 1.5)
+                          : BorderSide.none,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => workerController.openWhatsApp(controller.worker.whatsapp),
-                icon: const Icon(Icons.message),
-                label: Text('message'.tr),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => workerController.openWhatsApp(controller.worker.whatsapp),
+                  icon: const Icon(Icons.message),
+                  label: Text('message'.tr),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[600],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => workerController.makePhoneCall(controller.worker.phone),
-                icon: const Icon(Icons.phone),
-                label: Text('phone'.tr),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 5, 95, 66),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => workerController.makePhoneCall(controller.worker.phone),
+                  icon: const Icon(Icons.phone),
+                  label: Text('phone'.tr),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 5, 95, 66),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 

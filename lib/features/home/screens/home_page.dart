@@ -45,13 +45,11 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: Obx(
-        () => PageView(
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          children: pages,
-          physics: const BouncingScrollPhysics(),
-        ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        children: pages,
+        physics: const BouncingScrollPhysics(),
       ),
       bottomNavigationBar: _BottomNav(controller: controller, isDark: isDark, onTap: onNavTap),
     );
@@ -67,30 +65,28 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: Colors.transparent,
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: controller.currentIndex.value,
-          onTap: onTap ?? controller.changeTab,
-          backgroundColor: Colors.black,
-          selectedItemColor: Color.fromARGB(255, 215, 184, 133),
-          unselectedItemColor: Colors.grey,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Colors.transparent,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
-            BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
-          ],
         ),
+      ),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: controller.currentIndex.value,
+        onTap: onTap ?? controller.changeTab,
+        backgroundColor: Colors.black,
+        selectedItemColor: Color.fromARGB(255, 215, 184, 133),
+        unselectedItemColor: Colors.grey,
+        elevation: 0,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
+        ],
       ),
     );
   }

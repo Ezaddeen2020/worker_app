@@ -23,33 +23,33 @@ class MyApp extends StatelessWidget {
     final ThemeController themeController = Get.find<ThemeController>();
     final LanguageController languageController = Get.find<LanguageController>();
 
-    return Obx(
-      () => GetMaterialApp(
-        title: 'appTitle'.tr,
-        debugShowCheckedModeBanner: false,
-        initialBinding: InitialBinding(),
-        initialRoute: AppRoutes.splash,
-        getPages: AppRoutes.pages,
-        // استخدام نظام GetX للترجمات
-        translations: AppTranslations(),
-        locale: languageController.locale.value,
-        fallbackLocale: const Locale('ar'),
-        // دعم اللغة العربية والإنجليزية
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('ar'), Locale('en')],
-        theme: ThemeController.lightTheme,
-        darkTheme: ThemeController.darkTheme,
-        themeMode: themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
-        builder: (context, child) {
-          return Directionality(
-            textDirection: languageController.isArabic ? TextDirection.rtl : TextDirection.ltr,
-            child: child ?? const SizedBox.shrink(),
-          );
-        },
+    return GetBuilder<ThemeController>(
+      builder: (_) => GetBuilder<LanguageController>(
+        builder: (_) => GetMaterialApp(
+          title: 'appTitle'.tr,
+          debugShowCheckedModeBanner: false,
+          initialBinding: InitialBinding(),
+          initialRoute: AppRoutes.splash,
+          getPages: AppRoutes.pages,
+          translations: AppTranslations(),
+          locale: languageController.locale.value,
+          fallbackLocale: const Locale('ar'),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('ar'), Locale('en')],
+          theme: ThemeController.lightTheme,
+          darkTheme: ThemeController.darkTheme,
+          themeMode: themeController.isDarkMode.value ? ThemeMode.dark : ThemeMode.light,
+          builder: (context, child) {
+            return Directionality(
+              textDirection: languageController.isArabic ? TextDirection.rtl : TextDirection.ltr,
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
+        ),
       ),
     );
   }
