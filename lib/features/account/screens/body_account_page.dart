@@ -62,13 +62,7 @@ class BodyAccountPage extends StatelessWidget {
 
           return PostGridItem(
             project: project,
-            onTap: () => _openPostDetail(
-              context,
-              project,
-              updatedUser!,
-              allPostsWithUser,
-              index,
-            ),
+            onTap: () => _openPostDetail(context, project, updatedUser!, allPostsWithUser, index),
           );
         },
       );
@@ -85,10 +79,7 @@ class BodyAccountPage extends StatelessWidget {
             height: 62,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: isDark ? Colors.white : Colors.black,
-                width: 2,
-              ),
+              border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
             ),
             child: Icon(
               Icons.camera_alt_outlined,
@@ -100,7 +91,7 @@ class BodyAccountPage extends StatelessWidget {
           Text(
             'noPostsYet'.tr,
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
               letterSpacing: -0.5,

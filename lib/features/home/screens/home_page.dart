@@ -73,20 +73,22 @@ class _BottomNav extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: controller.currentIndex.value,
-        onTap: onTap ?? controller.changeTab,
-        backgroundColor: Colors.black,
-        selectedItemColor: Color.fromARGB(255, 215, 184, 133),
-        unselectedItemColor: Colors.grey,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
-        ],
+      child: Obx(
+        () => BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: controller.currentIndex.value,
+          onTap: onTap ?? controller.changeTab,
+          backgroundColor: Colors.black,
+          selectedItemColor: Color.fromARGB(255, 215, 184, 133),
+          unselectedItemColor: Colors.grey,
+          elevation: 0,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.message), label: 'postsPageTitle'.tr),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'accountPageTitle'.tr),
+          ],
+        ),
       ),
     );
   }
