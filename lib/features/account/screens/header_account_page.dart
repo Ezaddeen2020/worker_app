@@ -27,156 +27,165 @@ class HeaderAccountPage extends StatelessWidget {
     final rating = user.workerProfile?.rating ?? 0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Column(
-      children: [
-        // Profile Stats Section - Instagram Style
-        Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Profile Picture with Gradient Border (Story Style)
-              GestureDetector(
-                onTap: () => _showProfilePictureFullscreen(context),
-                child: _buildProfilePicture(isDark),
-              ),
-              SizedBox(width: 28),
-              // Stats
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatColumn('$postsCount', 'posts'.tr, isDark),
-                    _buildStatColumn('0', 'followersCount'.tr, isDark),
-                    _buildStatColumn('0', 'followingCount'.tr, isDark),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.grey[200]!, Colors.grey[300]!, Colors.grey[400]!],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-
-        // Name and Bio Section
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name
-              Text(
-                user.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: isDark ? Colors.white : Colors.black,
+      ),
+      child: Column(
+        children: [
+          // Profile Stats Section - Instagram Style
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Profile Picture with Gradient Border (Story Style)
+                GestureDetector(
+                  onTap: () => _showProfilePictureFullscreen(context),
+                  child: _buildProfilePicture(isDark),
                 ),
-              ),
-              SizedBox(height: 4),
-              // Role/Category with Rating
-              Row(
-                children: [
-                  if (user.role == 'worker')
-                    Text(
-                      'professionalWorker'.tr,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    )
-                  else
-                    Text(
-                      'clientUser'.tr,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.white70 : Colors.black87,
-                      ),
-                    ),
-                  if (rating > 0) ...[
-                    SizedBox(width: 8),
-                    Icon(Icons.star, size: 14, color: Colors.amber),
-                    Text(
-                      ' $rating',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              SizedBox(height: 6),
-              // Member Since
-              Text(
-                '${'memberSince'.tr} ${_formatDateShort(user.createdAt)}',
-                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-              ),
-              // Phone Number
-              if (user.phone != null && user.phone.isNotEmpty) ...[
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.phone, size: 13, color: Colors.grey[600]),
-                    SizedBox(width: 4),
-                    Text(user.phone, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                  ],
+                SizedBox(width: 28),
+                // Stats
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatColumn('$postsCount', 'posts'.tr, isDark),
+                      _buildStatColumn('0', 'followersCount'.tr, isDark),
+                      _buildStatColumn('0', 'followingCount'.tr, isDark),
+                    ],
+                  ),
                 ),
               ],
-            ],
+            ),
           ),
-        ),
 
-        SizedBox(height: 16),
+          // Name and Bio Section
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                Text(
+                  user.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                SizedBox(height: 4),
+                // Role/Category with Rating
+                Row(
+                  children: [
+                    if (user.role == 'worker')
+                      Text(
+                        'professionalWorker'.tr,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      )
+                    else
+                      Text(
+                        'clientUser'.tr,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                    if (rating > 0) ...[
+                      SizedBox(width: 8),
+                      Icon(Icons.star, size: 14, color: Colors.amber),
+                      Text(
+                        ' $rating',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                SizedBox(height: 6),
+                // Member Since
+                Text(
+                  '${'memberSince'.tr} ${_formatDateShort(user.createdAt)}',
+                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                ),
+                // Phone Number
+                if (user.phone != null && user.phone.isNotEmpty) ...[
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.phone, size: 13, color: Colors.grey[600]),
+                      SizedBox(width: 4),
+                      Text(user.phone, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
 
-        // Action Buttons - Instagram Style
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              // Edit Profile Button
-              Expanded(
-                flex: 2,
-                child: _buildActionButton(
-                  label: 'editProfileBtn'.tr,
-                  onPressed: onEditProfilePressed,
-                  isPrimary: false,
+          SizedBox(height: 16),
+
+          // Action Buttons - Instagram Style
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                // Edit Profile Button
+                Expanded(
+                  flex: 2,
+                  child: _buildActionButton(
+                    label: 'editProfileBtn'.tr,
+                    onPressed: onEditProfilePressed,
+                    isPrimary: false,
+                    isDark: isDark,
+                  ),
+                ),
+                SizedBox(width: 8),
+                // Share Profile Button
+                Expanded(
+                  child: _buildActionButton(
+                    label: 'shareProfile'.tr,
+                    onPressed: () => _shareProfile(),
+                    isPrimary: false,
+                    isDark: isDark,
+                  ),
+                ),
+                SizedBox(width: 8),
+                // Suggest User Button
+                _buildIconButton(
+                  icon: Icons.person_add_outlined,
+                  onPressed: () {
+                    Get.snackbar(
+                      'comingSoon'.tr,
+                      'suggestFriend'.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      duration: Duration(seconds: 2),
+                    );
+                  },
                   isDark: isDark,
                 ),
-              ),
-              SizedBox(width: 8),
-              // Share Profile Button
-              Expanded(
-                child: _buildActionButton(
-                  label: 'shareProfile'.tr,
-                  onPressed: () => _shareProfile(),
-                  isPrimary: false,
-                  isDark: isDark,
-                ),
-              ),
-              SizedBox(width: 8),
-              // Suggest User Button
-              _buildIconButton(
-                icon: Icons.person_add_outlined,
-                onPressed: () {
-                  Get.snackbar(
-                    'comingSoon'.tr,
-                    'suggestFriend'.tr,
-                    snackPosition: SnackPosition.BOTTOM,
-                    duration: Duration(seconds: 2),
-                  );
-                },
-                isDark: isDark,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        SizedBox(height: 16),
+          SizedBox(height: 16),
 
-        // Story Highlights Section
-        _buildStoryHighlights(isDark),
+          // Story Highlights Section
+          _buildStoryHighlights(isDark),
 
-        SizedBox(height: 8),
-      ],
+          SizedBox(height: 8),
+        ],
+      ),
     );
   }
 
