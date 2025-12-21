@@ -53,18 +53,18 @@ class ProjectCard extends StatelessWidget {
 
     return RepaintBoundary(
       child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
+        margin: const EdgeInsets.only(bottom: 24),
         decoration: BoxDecoration(
-          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: isDark ? Color(0xFF353E47) : Color(0xFFD6D6D6),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black26 : Colors.grey.withValues(alpha: 0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 2),
+              color: isDark ? Colors.black38 : Colors.grey.withOpacity(0.10),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
+          border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey[400]!, width: 1.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,42 +142,68 @@ class ProjectCard extends StatelessWidget {
 
             // Project images
             if (hasImages)
-              SizedBox(
-                height: 300,
-                child: PageView.builder(
-                  itemCount: project.images.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        final postsToShow =
-                            allPosts ?? [ProjectWithUser(project: project, user: user)];
-                        final currentIndex = postsToShow.indexWhere(
-                          (p) => p.project.id == project.id,
-                        );
-
-                        Get.to(
-                          () => PostDetailView(
-                            project: project,
-                            user: user,
-                            allPosts: postsToShow,
-                            initialIndex: currentIndex >= 0 ? currentIndex : 0,
-                          ),
-                        );
-                      },
-                      child: Image.file(
-                        File(project.images[index]),
-                        fit: BoxFit.cover,
-                        cacheWidth: 600, // تحسين الأداء بتحديد حجم الكاش
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: isDark ? Colors.grey[800] : Colors.grey[300],
-                            child: const Icon(Icons.broken_image, size: 48),
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
+                ),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: 220,
+                      child: PageView.builder(
+                        itemCount: project.images.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              final postsToShow =
+                                  allPosts ?? [ProjectWithUser(project: project, user: user)];
+                              final currentIndex = postsToShow.indexWhere(
+                                (p) => p.project.id == project.id,
+                              );
+                              Get.to(
+                                () => PostDetailView(
+                                  project: project,
+                                  user: user,
+                                  allPosts: postsToShow,
+                                  initialIndex: currentIndex >= 0 ? currentIndex : 0,
+                                ),
+                              );
+                            },
+                            child: Image.file(
+                              File(project.images[index]),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              cacheWidth: 600,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: isDark ? Colors.grey[800] : Colors.grey[300],
+                                  child: const Icon(Icons.broken_image, size: 48),
+                                );
+                              },
+                            ),
                           );
                         },
                       ),
-                    );
-                  },
+                    ),
+                    if (project.images.length > 1)
+                      Positioned(
+                        bottom: 8,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${project.images.length} صور',
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               )
             else
@@ -185,7 +211,6 @@ class ProjectCard extends StatelessWidget {
                 onTap: () {
                   final postsToShow = allPosts ?? [ProjectWithUser(project: project, user: user)];
                   final currentIndex = postsToShow.indexWhere((p) => p.project.id == project.id);
-
                   Get.to(
                     () => PostDetailView(
                       project: project,
@@ -196,8 +221,14 @@ class ProjectCard extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  height: 200,
-                  color: isDark ? Colors.grey[800] : Colors.grey[300],
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[850] : Colors.grey[200],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      topRight: Radius.circular(18),
+                    ),
+                  ),
                   child: Icon(
                     Icons.image,
                     size: 48,
@@ -208,21 +239,29 @@ class ProjectCard extends StatelessWidget {
 
             // Project content
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
-                  Text(
-                    project.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black,
+                  // Title with same card background
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: isDark ? Color(0xFF353E47) : Color(0xFFD6D6D6),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      project.title,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black,
+                        letterSpacing: 0.2,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-
+                  const SizedBox(height: 6),
                   // Price
                   if (project.price != null && project.price! > 0)
                     Text(
@@ -233,29 +272,29 @@ class ProjectCard extends StatelessWidget {
                         color: Color.fromARGB(255, 5, 95, 66),
                       ),
                     ),
-                  const SizedBox(height: 8),
-
+                  const SizedBox(height: 6),
                   // Description
                   Text(
                     project.description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 14,
                       color: isDark ? Colors.grey[300] : Colors.grey[700],
+                      height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 12),
-
+                  const SizedBox(height: 14),
                   // Likes and actions - Using Obx for reactive updates
                   Obx(() {
-                    // Listen to PostService updates
                     postService.updateTrigger.value;
                     final isLiked = postService.isLiked(project.id);
                     final likeCount = postService.getLikeCount(project.id);
                     final commentCount = postService.commentCounts[project.id] ?? 0;
-
                     return Row(
                       children: [
-                        GestureDetector(
+                        InkWell(
+                          borderRadius: BorderRadius.circular(20),
                           onTap: _toggleLike,
                           child: Row(
                             children: [
@@ -264,7 +303,7 @@ class ProjectCard extends StatelessWidget {
                                 color: isLiked
                                     ? Colors.red
                                     : (isDark ? Colors.grey[400] : Colors.grey),
-                                size: 20,
+                                size: 22,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -274,15 +313,16 @@ class ProjectCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        GestureDetector(
+                        const SizedBox(width: 18),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(20),
                           onTap: () => _openComments(context),
                           child: Row(
                             children: [
                               Icon(
                                 Icons.comment_outlined,
                                 color: isDark ? Colors.grey[400] : Colors.grey,
-                                size: 20,
+                                size: 22,
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -293,7 +333,15 @@ class ProjectCard extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        Icon(Icons.share, color: isDark ? Colors.grey[400] : Colors.grey, size: 20),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () {},
+                          child: Icon(
+                            Icons.share,
+                            color: isDark ? Colors.grey[400] : Colors.grey,
+                            size: 22,
+                          ),
+                        ),
                       ],
                     );
                   }),

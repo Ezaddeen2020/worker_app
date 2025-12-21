@@ -26,7 +26,7 @@ class _AddProjectDialogState extends State<AddProjectDialog> {
   late TextEditingController _titleController;
   late TextEditingController _descController;
   late TextEditingController _priceController;
-  List<String> _selectedImages = [];
+  final List<String> _selectedImages = [];
   bool _isPublishing = false;
 
   @override
