@@ -17,7 +17,7 @@ class FavoritesPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Color.fromARGB(255, 223, 216, 216) : Colors.black,
           ),
         ),
       ),

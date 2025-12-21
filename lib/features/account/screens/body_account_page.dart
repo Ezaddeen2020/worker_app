@@ -25,11 +25,12 @@ class BodyAccountPage extends StatelessWidget {
     final isWorker = role == 'worker' || user.workerProfile != null;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    if (isWorker) {
-      return _buildWorkerPostsGrid(context, isDark);
-    } else {
-      return _buildEmptyState(isDark);
-    }
+    return Container(
+      color: isDark ? Color(0xFF353E47) : Color(0xFFD6D6D6),
+      child: isWorker
+          ? _buildWorkerPostsGrid(context, isDark)
+          : _buildEmptyState(isDark),
+    );
   }
 
   Widget _buildWorkerPostsGrid(BuildContext context, bool isDark) {
