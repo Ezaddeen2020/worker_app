@@ -14,12 +14,9 @@ class RegisterPage extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 5, 95, 66),
-              Color.fromARGB(255, 10, 150, 100)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFFF2F3F5), Color(0xFF91ADC6)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
@@ -36,13 +33,13 @@ class RegisterPage extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color(0xFF114577),
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'completeProfileInfo'.tr,
-                    style: const TextStyle(fontSize: 14, color: Colors.white70),
+                    'المعلومات الكاملة'.tr,
+                    style: const TextStyle(fontSize: 14, color: Color(0xFF071B33)),
                   ),
                   const SizedBox(height: 40),
 
@@ -50,7 +47,7 @@ class RegisterPage extends StatelessWidget {
                   _ProfileImagePicker(controller: controller),
                   const SizedBox(height: 12),
                   Text(
-                    'tapToSelectImage'.tr,
+                    'انقر لاختيار صورة'.tr,
                     style: const TextStyle(fontSize: 12, color: Colors.white70),
                   ),
                   const SizedBox(height: 40),
@@ -72,7 +69,7 @@ class RegisterPage extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // Info Box
-                  _InfoBox(),
+                  // _InfoBox(),
                 ],
               ),
             ),
@@ -97,19 +94,12 @@ class _ProfileImagePicker extends StatelessWidget {
         height: 140,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 5, 95, 66),
-              Color.fromARGB(255, 10, 150, 100),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -119,23 +109,20 @@ class _ProfileImagePicker extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Color(0xFF91ADC6).withOpacity(0.15),
               ),
-              child: const Icon(Icons.camera_alt, size: 50, color: Colors.white),
+              child: const Icon(Icons.camera_alt, size: 50, color: Color(0xFF114577)),
             );
           } else {
             return Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: FileImage(File(imagePath)),
-                  fit: BoxFit.cover,
-                ),
+                image: DecorationImage(image: FileImage(File(imagePath)), fit: BoxFit.cover),
               ),
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withOpacity(0.18),
                 ),
                 child: const Icon(Icons.edit, size: 30, color: Colors.white),
               ),
@@ -157,24 +144,24 @@ class _NameField extends StatelessWidget {
     return TextField(
       controller: controller.nameController,
       textAlign: TextAlign.right,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color(0xFF071B33)),
       decoration: InputDecoration(
-        hintText: 'enterYourFullName'.tr,
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-        prefixIcon: const Icon(Icons.person, color: Colors.white),
+        hintText: 'ادخل اسمك الكامل'.tr,
+        hintStyle: TextStyle(color: Color(0xFF91ADC6)),
+        prefixIcon: const Icon(Icons.person, color: Color(0xFF114577)),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.1),
+        fillColor: Colors.white.withOpacity(0.85),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+          borderSide: BorderSide(color: Color(0xFF91ADC6)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+          borderSide: BorderSide(color: Color(0xFF91ADC6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white, width: 2),
+          borderSide: const BorderSide(color: Color(0xFF114577), width: 2),
         ),
       ),
     );
@@ -193,45 +180,44 @@ class _RoleSelection extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.centerRight,
-          child: Text(
-            'accountType'.tr,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 14),
-          ),
+          child: Text('نوع الحساب', style: TextStyle(color: Color(0xFF071B33), fontSize: 14)),
         ),
         const SizedBox(height: 8),
-        Obx(() => Row(
-              children: [
-                Expanded(
-                  child: ChoiceChip(
-                    label: Text('client'.tr),
-                    selected: controller.selectedRole.value == 'client',
-                    onSelected: (s) => controller.setRole('client'),
-                    selectedColor: Colors.white,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(
-                      color: controller.selectedRole.value == 'client'
-                          ? Color.fromARGB(255, 5, 95, 66)
-                          : Colors.white,
-                    ),
+        Obx(
+          () => Row(
+            children: [
+              Expanded(
+                child: ChoiceChip(
+                  label: Text('client'.tr),
+                  selected: controller.selectedRole.value == 'client',
+                  onSelected: (s) => controller.setRole('client'),
+                  selectedColor: Color(0xFF91ADC6),
+                  backgroundColor: Colors.white.withOpacity(0.7),
+                  labelStyle: TextStyle(
+                    color: controller.selectedRole.value == 'client'
+                        ? Color(0xFF114577)
+                        : Color(0xFF071B33),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ChoiceChip(
-                    label: Text('worker'.tr),
-                    selected: controller.selectedRole.value == 'worker',
-                    onSelected: (s) => controller.setRole('worker'),
-                    selectedColor: Colors.white,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(
-                      color: controller.selectedRole.value == 'worker'
-                          ? Color.fromARGB(255, 5, 95, 66)
-                          : Colors.white,
-                    ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ChoiceChip(
+                  label: Text('worker'.tr),
+                  selected: controller.selectedRole.value == 'worker',
+                  onSelected: (s) => controller.setRole('worker'),
+                  selectedColor: Color(0xFF91ADC6),
+                  backgroundColor: Colors.white.withOpacity(0.7),
+                  labelStyle: TextStyle(
+                    color: controller.selectedRole.value == 'worker'
+                        ? Color(0xFF114577)
+                        : Color(0xFF071B33),
                   ),
                 ),
-              ],
-            )),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -248,24 +234,24 @@ class _PhoneField extends StatelessWidget {
       controller: controller.phoneController,
       keyboardType: TextInputType.phone,
       textAlign: TextAlign.right,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color(0xFF071B33)),
       decoration: InputDecoration(
-        hintText: 'phoneNumberPlaceholder'.tr,
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-        prefixIcon: const Icon(Icons.phone, color: Colors.white),
+        hintText: 'ادخل رقم هاتفك'.tr,
+        hintStyle: TextStyle(color: Color(0xFF91ADC6)),
+        prefixIcon: const Icon(Icons.phone, color: Color(0xFF114577)),
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.1),
+        fillColor: Colors.white.withOpacity(0.85),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+          borderSide: BorderSide(color: Color(0xFF91ADC6)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+          borderSide: BorderSide(color: Color(0xFF91ADC6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white, width: 2),
+          borderSide: const BorderSide(color: Color(0xFF114577), width: 2),
         ),
       ),
     );
@@ -287,10 +273,10 @@ class _RegisterButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: isLoading ? null : controller.register,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Color.fromARGB(255, 5, 95, 66),
+            backgroundColor: Color(0xFF114577),
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            disabledBackgroundColor: Colors.white.withValues(alpha: 0.5),
+            disabledBackgroundColor: Color(0xFF91ADC6).withOpacity(0.5),
           ),
           child: isLoading
               ? const SizedBox(
@@ -298,75 +284,15 @@ class _RegisterButton extends StatelessWidget {
                   width: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color.fromARGB(255, 5, 95, 66),
-                    ),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF91ADC6)),
                   ),
                 )
               : Text(
-                  'createAccount'.tr,
+                  'انشاء حساب'.tr,
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
         ),
       );
     });
-  }
-}
-
-class _InfoBox extends StatelessWidget {
-  const _InfoBox();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            'importantInformation'.tr,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-            textDirection: TextDirection.rtl,
-          ),
-          const SizedBox(height: 8),
-          _InfoRow(text: 'mustEnterValidName'.tr),
-          const SizedBox(height: 6),
-          _InfoRow(text: 'phoneNumberMustBeValid'.tr),
-          const SizedBox(height: 6),
-          _InfoRow(text: 'imageMustBeClear'.tr),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String text;
-
-  const _InfoRow({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Text(
-            text,
-            textAlign: TextAlign.right,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12),
-          ),
-        ),
-      ],
-    );
   }
 }

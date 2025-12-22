@@ -26,10 +26,19 @@ class BodyAccountPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      color: isDark ? Color(0xFF353E47) : Color(0xFFD6D6D6),
-      child: isWorker
-          ? _buildWorkerPostsGrid(context, isDark)
-          : _buildEmptyState(isDark),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [Color(0xFF23272B), Color(0xFF353E47)]
+              : [Color(0xFFF2F3F5), Color(0xFFB0B6BE)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
+        child: isWorker ? _buildWorkerPostsGrid(context, isDark) : _buildEmptyState(isDark),
+      ),
     );
   }
 
@@ -94,7 +103,7 @@ class BodyAccountPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : const Color.fromARGB(255, 0, 0, 0),
               letterSpacing: -0.5,
             ),
           ),

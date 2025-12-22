@@ -69,7 +69,7 @@ class _BottomNav extends StatelessWidget {
       data: Theme.of(context).copyWith(
         canvasColor: Colors.transparent,
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Color(0xFFB0B6BE),
           elevation: 0,
         ),
       ),
@@ -78,7 +78,7 @@ class _BottomNav extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           currentIndex: controller.currentIndex.value,
           onTap: onTap ?? controller.changeTab,
-          backgroundColor: Colors.black,
+          backgroundColor: Color.fromARGB(255, 36, 40, 45),
           selectedItemColor: Color.fromARGB(255, 215, 184, 133),
           unselectedItemColor: Colors.grey,
           elevation: 0,
