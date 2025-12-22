@@ -17,127 +17,131 @@ class AccountPage extends StatelessWidget {
       if (!controller.authController.isUserLoggedIn.value ||
           controller.authController.currentUser.value == null) {
         return Scaffold(
-          backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
-          body: _NotLoggedInView(controller: controller, isDark: isDark),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: _NotLoggedInView(controller: controller, isDark: isDark),
+          ),
         );
       }
 
       final user = controller.authController.currentUser.value!;
-      print('AccountPage: user.role = ${user.role}, workerProfile = ${user.workerProfile != null}');
 
       return Scaffold(
-        backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              // Instagram-style AppBar
-              SliverAppBar(
-                backgroundColor: isDark ? Color(0xFF121212) : Colors.white,
-                foregroundColor: isDark ? Colors.white : Colors.black,
-                elevation: 0,
-                pinned: false,
-                floating: true,
-                title: Row(
-                  children: [
-                    Icon(Icons.lock_outline,
-                        size: 16, color: isDark ? Colors.white : Colors.black),
-                    SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        user.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: isDark ? Colors.white : Colors.black,
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                // Instagram-style AppBar
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Color(0xFF114577),
+                  elevation: 0,
+                  pinned: false,
+                  floating: true,
+                  title: Row(
+                    children: [
+                      Icon(Icons.lock_outline, size: 16, color: Color(0xFF114577)),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Color(0xFF114577),
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      size: 20,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ],
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.add_box_outlined,
-                      size: 28,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                    onPressed: () => controller.showAddProjectDialog(context),
-                    tooltip: 'addNewPost'.tr,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.menu,
-                        size: 28, color: isDark ? Colors.white : Colors.black),
-                    onPressed: () => controller.showOptionsMenu(context, isDark),
-                    tooltip: 'menu'.tr,
-                  ),
-                ],
-              ),
-            ];
-          },
-          body: CustomScrollView(
-            slivers: [
-              // Profile Header
-              SliverToBoxAdapter(
-                child: HeaderAccountPage(
-                  user: user,
-                  authController: controller.authController,
-                  context: context,
-                  onEditProfilePressed: () =>
-                      controller.showEditProfileDialog(context),
-                  onMenuPressed: () =>
-                      controller.showOptionsMenu(context, isDark),
-                ),
-              ),
-
-              // Tab Bar
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    controller: controller.tabController,
-                    indicatorColor: isDark ? Colors.white : Colors.black,
-                    indicatorWeight: 1,
-                    labelColor: isDark ? Colors.white : Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: [
-                      Tab(icon: Icon(Icons.grid_on, size: 26)),
-                      Tab(icon: Icon(Icons.person_pin_outlined, size: 26)),
-                      Tab(icon: Icon(Icons.bookmark_border, size: 26)),
+                      Icon(Icons.keyboard_arrow_down, size: 20, color: Color(0xFF114577)),
                     ],
                   ),
-                  isDark: isDark,
-                ),
-              ),
-
-              // Tab Content
-              SliverFillRemaining(
-                child: TabBarView(
-                  controller: controller.tabController,
-                  children: [
-                    // Posts
-                    BodyAccountPage(
-                        user: user,
-                        authController: controller.authController,
-                        context: context),
-                    // Tagged
-                    _TaggedSection(isDark: isDark),
-                    // Saved
-                    _SavedSection(isDark: isDark),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.add_box_outlined, size: 28, color: Color(0xFF114577)),
+                      onPressed: () => controller.showAddProjectDialog(context),
+                      tooltip: 'addNewPost'.tr,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.menu, size: 28, color: Color(0xFF114577)),
+                      onPressed: () => controller.showOptionsMenu(context, isDark),
+                      tooltip: 'menu'.tr,
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ];
+            },
+            body: CustomScrollView(
+              slivers: [
+                // Profile Header
+                SliverToBoxAdapter(
+                  child: HeaderAccountPage(
+                    user: user,
+                    authController: controller.authController,
+                    context: context,
+                    onEditProfilePressed: () => controller.showEditProfileDialog(context),
+                    onMenuPressed: () => controller.showOptionsMenu(context, isDark),
+                  ),
+                ),
+
+                // Tab Bar
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverAppBarDelegate(
+                    TabBar(
+                      controller: controller.tabController,
+                      indicatorColor: Color(0xFF114577),
+                      indicatorWeight: 2,
+                      labelColor: Color(0xFF114577),
+                      unselectedLabelColor: Color(0xFF91ADC6),
+                      tabs: [
+                        Tab(icon: Icon(Icons.grid_on, size: 26)),
+                        Tab(icon: Icon(Icons.person_pin_outlined, size: 26)),
+                        Tab(icon: Icon(Icons.bookmark_border, size: 26)),
+                      ],
+                    ),
+                    isDark: isDark,
+                  ),
+                ),
+
+                // Tab Content
+                SliverFillRemaining(
+                  child: TabBarView(
+                    controller: controller.tabController,
+                    children: [
+                      // Posts
+                      BodyAccountPage(
+                        user: user,
+                        authController: controller.authController,
+                        context: context,
+                      ),
+                      // Tagged
+                      _TaggedSection(isDark: isDark),
+                      // Saved
+                      _SavedSection(isDark: isDark),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => controller.showAddProjectDialog(context),
-          backgroundColor: Color.fromARGB(255, 5, 95, 66),
+          backgroundColor: Color(0xFF114577),
           elevation: 6,
           child: Icon(Icons.add, size: 30, color: Colors.white),
         ),
@@ -189,8 +193,7 @@ class _NotLoggedInView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF0095F6),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
                 child: Text(
@@ -238,8 +241,7 @@ class _TaggedSection extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border:
-                      Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
+                  border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
                 ),
                 child: Icon(
                   Icons.person_pin_outlined,
@@ -291,8 +293,7 @@ class _SavedSection extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border:
-                      Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
+                  border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
                 ),
                 child: Icon(
                   Icons.bookmark_border,
@@ -341,6 +342,5 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) =>
-      oldDelegate.isDark != isDark;
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => oldDelegate.isDark != isDark;
 }

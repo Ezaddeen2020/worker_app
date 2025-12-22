@@ -45,11 +45,24 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-      body: PageView(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        children: pages,
-        physics: const BouncingScrollPhysics(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF114577), // أزرق داكن
+              Color(0xFF91ADC6), // أزرق رمادي فاتح
+              Color.fromARGB(255, 167, 172, 168).withOpacity(0.09), // أبيض مزرق فاتح بخفوت شديد
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: PageView(
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          children: pages,
+          physics: const BouncingScrollPhysics(),
+        ),
       ),
       bottomNavigationBar: _BottomNav(controller: controller, isDark: isDark, onTap: onNavTap),
     );
@@ -69,8 +82,8 @@ class _BottomNav extends StatelessWidget {
       data: Theme.of(context).copyWith(
         canvasColor: Colors.transparent,
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Color(0xFFB0B6BE),
-          elevation: 0,
+          backgroundColor: Color.fromARGB(255, 141, 150, 143),
+          elevation: 12,
         ),
       ),
       child: Obx(
@@ -78,10 +91,10 @@ class _BottomNav extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           currentIndex: controller.currentIndex.value,
           onTap: onTap ?? controller.changeTab,
-          backgroundColor: Color.fromARGB(255, 36, 40, 45),
-          selectedItemColor: Color.fromARGB(255, 215, 184, 133),
-          unselectedItemColor: Colors.grey,
-          elevation: 0,
+          backgroundColor: Color(0xFFF2F8F3),
+          selectedItemColor: Color(0xFF114577),
+          unselectedItemColor: Color(0xFF91ADC6),
+          elevation: 12,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'homePageTitle'.tr),
             BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'favoritesPageTitle'.tr),
@@ -106,16 +119,7 @@ class HomeContent extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF434B53), // أزرق رمادي داكن
-            Color(0xFF353E47), // رمادي مزرق
-          ],
-        ),
-      ),
+      color: Colors.transparent,
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -139,7 +143,8 @@ class HomeContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFD6C3A5), // لون ذهبي فاتح للعناوين
+                      color: Color(0xFF114577),
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ),
@@ -162,7 +167,8 @@ class HomeContent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFD6C3A5), // لون ذهبي فاتح للعناوين
+                      color: Color(0xFF114577),
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ),
@@ -190,15 +196,17 @@ class _HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF434B53), // نفس لون بداية البودي
-            Color(0xFF353E47), // نفس لون نهاية البودي
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Color(0xFFF2F8F3).withOpacity(0.92),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF114577).withOpacity(0.08),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,12 +244,12 @@ class _HeaderSection extends StatelessWidget {
                     children: [
                       Text(
                         'homePageTitle'.tr,
-                        style: TextStyle(color: Color.fromARGB(255, 186, 172, 159), fontSize: 14),
+                        style: TextStyle(color: Color(0xFF114577), fontSize: 14),
                       ),
                       Text(
                         user?.name ?? 'client'.tr,
                         style: TextStyle(
-                          color: Color(0xFFD6C3A5),
+                          color: Color(0xFF071B33),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -335,7 +343,8 @@ class _TopWorkersSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Color(0xFFD6C3A5),
+                  color: Color(0xFF114577),
+                  letterSpacing: -0.5,
                 ),
               ),
             ),
@@ -387,9 +396,7 @@ class _TopWorkerCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               gradient: LinearGradient(
-                colors: isDark
-                    ? [Color(0xFF353E47), Color(0xFF434B53)]
-                    : [Color(0xFF434B53), Color(0xFF353E47)],
+                colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -467,9 +474,19 @@ class _TopWorkerCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.location_on, size: 12, color: Colors.grey),
+                          Icon(
+                            Icons.location_on,
+                            size: 12,
+                            color: const Color.fromARGB(255, 237, 236, 236),
+                          ),
                           SizedBox(width: 2),
-                          Text(worker.city, style: TextStyle(fontSize: 11, color: Colors.grey)),
+                          Text(
+                            worker.city,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: const Color.fromARGB(255, 230, 227, 227),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -607,9 +624,7 @@ class _WorkerCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
             gradient: LinearGradient(
-              colors: isDark
-                  ? [Color(0xFF353E47), Color(0xFF434B53)]
-                  : [Color(0xFF434B53), Color(0xFF353E47)],
+              colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -620,7 +635,7 @@ class _WorkerCard extends StatelessWidget {
                 offset: Offset(0, 6),
               ),
             ],
-            border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.32), width: 1.3),
+            border: Border.all(color: Color(0xFF91ADC6).withOpacity(0.32), width: 1.3),
           ),
           child: Padding(
             padding: EdgeInsets.all(0),
@@ -761,14 +776,16 @@ class _WorkerCard extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: isDark
-                          ? [Color(0xFF434B53), Color(0xFF353E47)]
-                          : [Color(0xFF353E47), Color(0xFF434B53)],
+                      colors: [
+                        Color(0xFF114577),
+                        Color(0xFF91ADC6),
+                        Color(0xFFF2F8F3).withOpacity(0.09),
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Color(0xFFD6C3A5).withOpacity(0.18), width: 1),
+                    border: Border.all(color: Color(0xFF91ADC6).withOpacity(0.18), width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -850,24 +867,18 @@ class _StatColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = icon == Icons.star ? Color(0xFFFFC107) : Color(0xFF114577);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 18, color: Color.fromARGB(255, 229, 182, 111)),
+        Icon(icon, size: 18, color: iconColor),
         SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Color.fromARGB(255, 215, 210, 200),
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF071B33)),
         ),
         SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(fontSize: 10, color: const Color.fromARGB(255, 172, 171, 171)),
-        ),
+        Text(label, style: TextStyle(fontSize: 10, color: Color(0xFF91ADC6))),
       ],
     );
   }

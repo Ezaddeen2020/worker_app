@@ -30,9 +30,9 @@ class HeaderAccountPage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.grey[200]!, Colors.grey[300]!, Colors.grey[400]!],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
       child: Column(
@@ -75,7 +75,7 @@ class HeaderAccountPage extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: Color(0xFF114577),
                   ),
                 ),
                 SizedBox(height: 4),
@@ -85,28 +85,22 @@ class HeaderAccountPage extends StatelessWidget {
                     if (user.role == 'worker')
                       Text(
                         'professionalWorker'.tr,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                        ),
+                        style: TextStyle(fontSize: 14, color: Color(0xFF91ADC6)),
                       )
                     else
                       Text(
                         'clientUser'.tr,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                        ),
+                        style: TextStyle(fontSize: 14, color: Color(0xFF91ADC6)),
                       ),
                     if (rating > 0) ...[
                       SizedBox(width: 8),
-                      Icon(Icons.star, size: 14, color: Colors.amber),
+                      Icon(Icons.star, size: 14, color: Color(0xFFFFC107)),
                       Text(
                         ' $rating',
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: Color(0xFF114577),
                         ),
                       ),
                     ],
@@ -116,16 +110,16 @@ class HeaderAccountPage extends StatelessWidget {
                 // Member Since
                 Text(
                   '${'memberSince'.tr} ${_formatDateShort(user.createdAt)}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 13, color: Color(0xFF91ADC6)),
                 ),
                 // Phone Number
                 if (user.phone != null && user.phone.isNotEmpty) ...[
                   SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.phone, size: 13, color: Colors.grey[600]),
+                      Icon(Icons.phone, size: 13, color: Color(0xFF91ADC6)),
                       SizedBox(width: 4),
-                      Text(user.phone, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
+                      Text(user.phone, style: TextStyle(fontSize: 13, color: Color(0xFF91ADC6))),
                     ],
                   ),
                 ],
@@ -198,23 +192,14 @@ class HeaderAccountPage extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [
-            Color(0xFFFCAF45),
-            Color(0xFFF77737),
-            Color(0xFFE1306C),
-            Color(0xFFC13584),
-            Color(0xFF833AB4),
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
+          colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
       padding: EdgeInsets.all(3),
       child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isDark ? Color(0xFF121212) : Colors.white,
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
         padding: EdgeInsets.all(3),
         child: ClipOval(
           child: hasImage
@@ -255,14 +240,11 @@ class HeaderAccountPage extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.5,
-            color: isDark ? Colors.white : Colors.black,
+            color: Color.fromARGB(255, 220, 225, 231),
           ),
         ),
         SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
-        ),
+        Text(label, style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 202, 216, 229))),
       ],
     );
   }
@@ -279,13 +261,10 @@ class HeaderAccountPage extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           backgroundColor: isPrimary
-              ? Color(0xFF0095F6)
-              : (isDark ? Color(0xFF262626) : Colors.white),
-          foregroundColor: isPrimary ? Colors.white : (isDark ? Colors.white : Colors.black),
-          side: BorderSide(
-            color: isPrimary ? Color(0xFF0095F6) : (isDark ? Colors.grey[700]! : Colors.grey[300]!),
-            width: 1,
-          ),
+              ? Color.fromARGB(255, 5, 13, 21)
+              : Color(0xFFF2F8F3).withOpacity(0.7),
+          foregroundColor: isPrimary ? Colors.white : Color(0xFF114577),
+          side: BorderSide(color: isPrimary ? Color(0xFF114577) : Color(0xFF91ADC6), width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: EdgeInsets.symmetric(horizontal: 16),
         ),
@@ -305,12 +284,12 @@ class HeaderAccountPage extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: isDark ? Color(0xFF262626) : Colors.white,
-          side: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!, width: 1),
+          backgroundColor: Color(0xFFF2F8F3).withOpacity(0.7),
+          side: BorderSide(color: Color(0xFF91ADC6), width: 1),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: EdgeInsets.zero,
         ),
-        child: Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
+        child: Icon(icon, size: 20, color: Color(0xFF114577)),
       ),
     );
   }
@@ -350,18 +329,15 @@ class HeaderAccountPage extends StatelessWidget {
               height: 68,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                  width: 1.5,
-                ),
+                border: Border.all(color: Color(0xFF91ADC6), width: 1.5),
               ),
-              child: Icon(Icons.add, color: isDark ? Colors.white : Colors.black, size: 32),
+              child: Icon(Icons.add, color: Color(0xFF114577), size: 32),
             ),
           ),
           SizedBox(height: 6),
           Text(
             'new'.tr,
-            style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87),
+            style: TextStyle(fontSize: 12, color: Color(0xFF91ADC6)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -384,11 +360,8 @@ class HeaderAccountPage extends StatelessWidget {
               height: 68,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark ? Colors.grey[800] : Colors.grey[200],
-                border: Border.all(
-                  color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
-                  width: 1.5,
-                ),
+                color: Color(0xFFF2F8F3),
+                border: Border.all(color: Color(0xFF91ADC6), width: 1.5),
               ),
               child: imagePath != null && imagePath.isNotEmpty
                   ? ClipOval(
@@ -396,25 +369,17 @@ class HeaderAccountPage extends StatelessWidget {
                         File(imagePath),
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.image,
-                            color: isDark ? Colors.grey[500] : Colors.grey[400],
-                            size: 30,
-                          );
+                          return Icon(Icons.image, color: Color(0xFF91ADC6), size: 30);
                         },
                       ),
                     )
-                  : Icon(
-                      Icons.image,
-                      color: isDark ? Colors.grey[500] : Colors.grey[400],
-                      size: 30,
-                    ),
+                  : Icon(Icons.image, color: Color(0xFF91ADC6), size: 30),
             ),
           ),
           SizedBox(height: 6),
           Text(
             title,
-            style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black87),
+            style: TextStyle(fontSize: 12, color: Color(0xFF91ADC6)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
