@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../services/post_service.dart';
-import '../../../widgets/project_card.dart';
+import '../../../widgets/project_card_new.dart';
 
 class PostsPage extends StatelessWidget {
   const PostsPage({super.key});
@@ -12,25 +12,22 @@ class PostsPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? Color(0xFF1E1E1E) : Color.fromRGBO(231, 230, 226, 0.2),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF434B53), Color(0xFF353E47)],
-          ),
-        ),
         child: Column(
           children: [
             AppBar(
               title: Text(
                 'posts'.tr,
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
               ),
               centerTitle: true,
               elevation: 0,
               backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white,
+              foregroundColor: isDark ? Colors.white : Colors.black87,
             ),
             Expanded(
               child: Obx(() {
@@ -38,10 +35,16 @@ class PostsPage extends StatelessWidget {
                 final posts = postService.feedPosts;
 
                 if (isLoading && posts.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: isDark ? Colors.blue[400] : Colors.blue[600],
+                    ),
+                  );
                 }
 
                 return RefreshIndicator(
+                  color: isDark ? Colors.blue[400] : Colors.blue[600],
+                  backgroundColor: isDark ? Color(0xFF1E1E1E) : Color.fromRGBO(231, 230, 226, 0.2),
                   onRefresh: () async {
                     await postService.loadAllPosts();
                     await Future.delayed(const Duration(milliseconds: 200));
@@ -54,7 +57,11 @@ class PostsPage extends StatelessWidget {
                             Center(
                               child: Text(
                                 'noPostsFound'.tr,
-                                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                style: TextStyle(
+                                  color: isDark ? Colors.white70 : Colors.black54,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ],

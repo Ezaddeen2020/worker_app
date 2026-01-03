@@ -36,7 +36,11 @@ class AccountPage extends StatelessWidget {
         body: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+              colors: [
+                Color(0xFF114577),
+                Color.fromARGB(255, 121, 153, 181),
+                Color(0xFFF2F8F3).withOpacity(0.09),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -53,30 +57,30 @@ class AccountPage extends StatelessWidget {
                   floating: true,
                   title: Row(
                     children: [
-                      Icon(Icons.lock_outline, size: 16, color: Color(0xFF114577)),
+                      // Icon(Icons.lock_outline, size: 16, color: Color.fromARGB(255, 218, 222, 226)),
                       SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          user.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Color(0xFF114577),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Icon(Icons.keyboard_arrow_down, size: 20, color: Color(0xFF114577)),
+                      // Expanded(
+                      //   child: Text(
+                      //     user.name,
+                      //     style: TextStyle(
+                      //       fontWeight: FontWeight.bold,
+                      //       fontSize: 18,
+                      //       color: Color.fromARGB(255, 215, 222, 229),
+                      //     ),
+                      //     overflow: TextOverflow.ellipsis,
+                      //   ),
+                      // ),
+                      // Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.white),
                     ],
                   ),
                   actions: [
                     IconButton(
-                      icon: Icon(Icons.add_box_outlined, size: 28, color: Color(0xFF114577)),
+                      icon: Icon(Icons.add_box_outlined, size: 24, color: Colors.white),
                       onPressed: () => controller.showAddProjectDialog(context),
                       tooltip: 'addNewPost'.tr,
                     ),
                     IconButton(
-                      icon: Icon(Icons.menu, size: 28, color: Color(0xFF114577)),
+                      icon: Icon(Icons.menu, size: 24, color: Colors.white),
                       onPressed: () => controller.showOptionsMenu(context, isDark),
                       tooltip: 'menu'.tr,
                     ),

@@ -74,8 +74,8 @@ class HeaderAccountPage extends StatelessWidget {
                   user.name,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Color(0xFF114577),
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 24, 19, 7),
                   ),
                 ),
                 SizedBox(height: 4),
@@ -85,12 +85,12 @@ class HeaderAccountPage extends StatelessWidget {
                     if (user.role == 'worker')
                       Text(
                         'professionalWorker'.tr,
-                        style: TextStyle(fontSize: 14, color: Color(0xFF91ADC6)),
+                        style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 225, 228, 230)),
                       )
                     else
                       Text(
                         'clientUser'.tr,
-                        style: TextStyle(fontSize: 14, color: Color(0xFF91ADC6)),
+                        style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 226, 228, 230)),
                       ),
                     if (rating > 0) ...[
                       SizedBox(width: 8),
@@ -110,16 +110,19 @@ class HeaderAccountPage extends StatelessWidget {
                 // Member Since
                 Text(
                   '${'memberSince'.tr} ${_formatDateShort(user.createdAt)}',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF91ADC6)),
+                  style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 12, 5, 0)),
                 ),
                 // Phone Number
                 if (user.phone != null && user.phone.isNotEmpty) ...[
                   SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.phone, size: 13, color: Color(0xFF91ADC6)),
+                      Icon(Icons.phone, size: 13, color: Color.fromARGB(255, 0, 7, 12)),
                       SizedBox(width: 4),
-                      Text(user.phone, style: TextStyle(fontSize: 13, color: Color(0xFF91ADC6))),
+                      Text(
+                        user.phone,
+                        style: TextStyle(fontSize: 13, color: Color.fromARGB(255, 0, 7, 12)),
+                      ),
                     ],
                   ),
                 ],
@@ -192,7 +195,11 @@ class HeaderAccountPage extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+          colors: [
+            Color.fromARGB(255, 173, 186, 199),
+            Color(0xFF91ADC6),
+            Color.fromARGB(255, 171, 180, 173).withOpacity(0.09),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -240,7 +247,7 @@ class HeaderAccountPage extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.5,
-            color: Color.fromARGB(255, 220, 225, 231),
+            color: Color.fromARGB(255, 7, 15, 24),
           ),
         ),
         SizedBox(height: 2),
@@ -369,11 +376,15 @@ class HeaderAccountPage extends StatelessWidget {
                         File(imagePath),
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.image, color: Color(0xFF91ADC6), size: 30);
+                          return Icon(
+                            Icons.image,
+                            color: Color.fromARGB(255, 50, 92, 130),
+                            size: 30,
+                          );
                         },
                       ),
                     )
-                  : Icon(Icons.image, color: Color(0xFF91ADC6), size: 30),
+                  : Icon(Icons.image, color: Color.fromARGB(255, 55, 118, 174), size: 30),
             ),
           ),
           SizedBox(height: 6),

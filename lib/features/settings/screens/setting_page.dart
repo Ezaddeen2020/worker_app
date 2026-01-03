@@ -17,62 +17,68 @@ class SettingsPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Color(0xFF121212) : Color(0xFF353E47),
+      // backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: isDark ? Color(0xFF121212) : Color(0xFF353E47),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'settingsAndPrivacy'.tr,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // شريط البحث
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDark ? Color(0xFF2C2C2C) : Color.fromRGBO(231, 230, 226, 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: TextField(
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
-                  decoration: InputDecoration(
-                    hintText: 'search'.tr,
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF114577), Color(0xFF91ADC6), Color(0xFFF2F8F3).withOpacity(0.09)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // شريط البحث
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TextField(
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'search'.tr,
+                      hintStyle: TextStyle(color: Colors.white70),
+                      prefixIcon: Icon(Icons.search, color: Colors.white70),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    ),
                   ),
                 ),
               ),
-            ),
-            // القسم الأول: مركز الحسابات وشرح التطبيق
-            SettingsMetaSection(isDark: isDark),
-            const SizedBox(height: 8),
-            // القسم الثاني: إعدادات التطبيق
-            SettingsAppSection(
-              themeController: themeController,
-              languageController: languageController,
-              isDark: isDark,
-            ),
-            const SizedBox(height: 8),
-            // القسم الثالث: الحساب والمساعدة
-            SettingsAccountSection(authController: authController, isDark: isDark),
-            const SizedBox(height: 32),
-          ],
+              // القسم الأول: مركز الحسابات وشرح التطبيق
+              SettingsMetaSection(isDark: false),
+              const SizedBox(height: 8),
+              // القسم الثاني: إعدادات التطبيق
+              SettingsAppSection(
+                themeController: themeController,
+                languageController: languageController,
+                isDark: false,
+              ),
+              const SizedBox(height: 8),
+              // القسم الثالث: الحساب والمساعدة
+              SettingsAccountSection(authController: authController, isDark: false),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
